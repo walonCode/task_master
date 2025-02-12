@@ -47,8 +47,9 @@ TaskMaster is a **Next.js**-powered task management app with **MongoDB** for sto
 3. Set up environment variables:
    - Create a `.env.local` file and add:
      ```env
-     DATABASE_URL=your_mongodb_url
-     NEXT_PUBLIC_API_URL=http://localhost:3000/api
+      ACCESS_TOKEN_SECRET=""
+      DATABASE_URI=""
+      domain=""
      ```
 
 4. Run the development server:
