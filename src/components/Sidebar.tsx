@@ -182,7 +182,7 @@ const Sidebar = () => {
           {/* User Profile Section */}
           <div className={`mt-auto p-4 border-t ${!isSidebarOpen && 'md:hidden'}`}>
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-full bg-gray-200" />
+              <Link href='/profile'><div className="w-8 h-8 rounded-full bg-gray-200" /></Link>
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-900">John Doe</p>
                 <p className="text-xs text-gray-500">john@example.com</p>

@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Task Management App",
+  title: "Task Master",
   description: "A good app to manage daily,weekly,monthly tasks and routine",
 };
 

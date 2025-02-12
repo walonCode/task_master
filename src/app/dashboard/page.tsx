@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { 
   FiHome, 
   FiCheckSquare, 
@@ -36,7 +37,9 @@ const DashboardPage = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6">
             <h2 className="text-xl font-semibold">Tasks</h2>
             <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              <Link href='/task/create' className='flex items-center justify-center gap-2'>
               <FiPlus /> Add Task
+              </Link>
             </button>
           </div>
 

@@ -28,23 +28,25 @@ const Navbar = () => {
           <div className="flex items-center space-x-2">
             {/* Hamburger Menu Button - Visible only on mobile */}
             <button 
-              className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
+              className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               <Menu className="w-5 h-5" />
             </button>
             <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <Link href='/task/create'>
               <Plus className="w-5 h-5" />
+              </Link>
             </button>
             <button className="ml-2 h-8 w-8 rounded-full bg-blue-900 text-white flex items-center justify-center">
-              JD
+              <Link href='/profile'>JD</Link>
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t">
+          <div className="lg:hidden py-4 border-t">
             <Link
               href="/dashboard"
               className="flex items-center space-x-1 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
