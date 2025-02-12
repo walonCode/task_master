@@ -73,7 +73,7 @@ TaskMaster is a **Next.js**-powered task management app with **MongoDB** for sto
   - `api/`: API routes for tasks and authentication.
 - `components/`: Reusable UI elements.
 - `libs/`: Utilities and database configuration.
-- `database/`: Mongoose models and schema.
+- `libs/models`: Mongoose models and schema.
 
 ---
 
