@@ -26,9 +26,9 @@ const userSchema = new Schema({
         required:[true, 'Please enter a password'],
         minlength: [8, 'please enter a password with more than 5 character'],
     },
-    todos:[{
+    tasks:[{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Todo',
+        ref:'Task',
     }]
 })
 

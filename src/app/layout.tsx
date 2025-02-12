@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Navbar from '@/components/Navbar';
+import Sidebar from "@/components/Sidebar";
+import Footer from "@/components/Footer";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Todo App",
-  description: "A good app to manage daily tasks and routine",
+  title: "Task Management App",
+  description: "A good app to manage daily,weekly,monthly tasks and routine",
 };
 
 export default function RootLayout({
@@ -27,7 +31,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Navbar />
+        <Sidebar/>
+        <main className="pt-16">
+          {children}
+        </main>
+        <Footer/>
       </body>
     </html>
   );
