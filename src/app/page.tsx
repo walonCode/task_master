@@ -16,16 +16,18 @@ export default function Home() {
             Join thousands of productive teams who use our platform to track, manage, and complete tasks with unprecedented efficiency.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-12">
+          {/* pricing for future use */}
+
+          {/* <div className="flex flex-col sm:flex-row gap-4 mb-12">
             <button className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl hover:-translate-y-0.5">
               Start Free Trial →
             </button>
             <button className="px-8 py-4 bg-white text-gray-800 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium border border-gray-200 hover:border-gray-300">
               Schedule Demo
             </button>
-          </div>
+          </div> */}
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-gray-500">
+          {/* <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-gray-500">
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -44,7 +46,7 @@ export default function Home() {
               </svg>
               Cancel anytime
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </main>

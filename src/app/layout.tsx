@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from '@/components/Navbar';
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
+import "react-toastify/dist/ReactToastify.css"
 
 
 const geistSans = Geist({

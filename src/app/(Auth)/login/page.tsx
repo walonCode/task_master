@@ -1,9 +1,10 @@
 "use client"
 
-import axios from "axios"
 import Link from "next/link"
-import { useState,useEffect } from "react"
+import { useState,useEffect,useContext } from "react"
 import { useRouter } from "next/navigation"
+import AuthContext from "@/libs/context/authContext"
+import { ToastContainer,toast } from "react-toastify"
 
 export default function Login(){
     const [username, setUsername] = useState<string>("")
@@ -13,6 +14,7 @@ export default function Login(){
     const [buttonDisable, setButtonDisable] = useState<boolean>(false)
     const [errorMessage, setErrorMessage] = useState<string>("")
     const router = useRouter()
+    const { login } = useContext(AuthContext) || {}
 
     useEffect(() => {
         setButtonDisable(!(password && username && isChecked));
@@ -23,18 +25,13 @@ export default function Login(){
             e.preventDefault()
             setLoading(true)
 
-            const loginUser = {
-                username,
-                password
-            }
-            const res = await axios.post('api/user/login',loginUser)
-            if(res.status === 200){
-                router.push('/todo')
-                console.log(res.data)
-            }
+            await login!(username,password)
+            toast('login successfully')
+            router.push('/tasks')
         }catch(error:unknown){
             console.log('error occurred',error)
             setErrorMessage('login failed')
+            toast(errorMessage)
         }finally{
             setLoading(false)
         }
@@ -111,6 +108,11 @@ export default function Login(){
                     </div>
                 </div>
             </div>
+            <ToastContainer
+            autoClose={5000}
+            hideProgressBar={false}
+            position="top-right"
+            />
         </div>
     )
 }

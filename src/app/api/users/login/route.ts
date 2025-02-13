@@ -40,10 +40,14 @@ export async function POST(req:NextRequest){
         // Create token
         const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, {expiresIn: "1d"})
 
+        const userResponse = user.toObject()
+        delete userResponse.password
+        
         const response = NextResponse.json({
             message: "Login successful",
             success: true,
-        })
+            userResponse
+        },{status:200})
 
         // Set cookie
         response.cookies.set("user", token, {

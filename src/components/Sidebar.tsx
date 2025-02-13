@@ -14,7 +14,8 @@ import {
   ChevronRight,
   FolderClosed,
   PanelLeftClose,
-  PanelLeft
+  PanelLeft,
+  LogOut
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -50,7 +51,7 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <aside 
-        className={`fixed top-0 left-0 h-screen bg-white border-r transition-all duration-300 z-[59]
+        className={`fixed top-0 left-0 h-screen pt-8 bg-white border-r transition-all duration-300 z-[50]
           ${isSidebarOpen ? 'w-[85%] sm:w-[300px] lg:w-64' : 'w-0 lg:w-[68px]'}
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           hidden lg:block
@@ -58,8 +59,8 @@ const Sidebar = () => {
       >
         <div className="flex flex-col h-full">
           {/* Logo/Header Section */}
-          <div className="p-4 border-b">
-            <h1 className={`font-semibold text-xl ${!isSidebarOpen && 'md:hidden'}`}>
+          <div className="pt-1  border-b">
+            <h1 className={`font-bold text-blue-950 text-center  text-xl ${!isSidebarOpen && 'md:hidden'}`}>
               TaskMaster
             </h1>
           </div>
@@ -67,7 +68,7 @@ const Sidebar = () => {
           {/* Scrollable Content */}
           <div className="flex-1 overflow-y-auto">
             {/* Main Navigation */}
-            <nav className="p-2 space-y-1">
+            <nav className="pt-5 space-y-1">
               <Link
                 href="/dashboard"
                 className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group hover:bg-blue-50 ${
@@ -180,12 +181,15 @@ const Sidebar = () => {
           </div>
 
           {/* User Profile Section */}
-          <div className={`mt-auto p-4 border-t ${!isSidebarOpen && 'md:hidden'}`}>
-            <div className="flex items-center space-x-3">
-              <Link href='/profile'><div className="w-8 h-8 rounded-full bg-gray-200" /></Link>
+          <div className={`mt-auto pb-5 pt-1 border-t ${!isSidebarOpen && 'md:hidden'}`}>
+            <div className="flex justify-between gap-3 items-center ">
+              <Link className='flex-1' href='/profile'><div className="w-8 h-8 rounded-full bg-gray-200" /></Link>
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-900">John Doe</p>
                 <p className="text-xs text-gray-500">john@example.com</p>
+              </div>
+              <div className='flex-1'>
+                <LogOut/>
               </div>
             </div>
           </div>
