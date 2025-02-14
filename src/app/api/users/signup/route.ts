@@ -11,9 +11,9 @@ export async function POST(req:NextRequest){
 
         
         const reqBody = await req.json()
-        const {username, email, password, fullname} = reqBody
+        const {username, email, password, fullname,jobTitle} = reqBody
 
-        if(!username || !email || !password || !fullname){
+        if(!username || !email || !password || !fullname || !jobTitle){
             return NextResponse.json(
                 {message:"All field are required"},
                 {status:400}
@@ -43,7 +43,8 @@ export async function POST(req:NextRequest){
             username,
             email,
             password:passwordHashed,
-            fullname
+            fullname,
+            jobTitle
         })
 
         await newUser.save()
@@ -55,6 +56,8 @@ export async function POST(req:NextRequest){
             message: "User created successfully",
             success: true,
             user: userResponse
+        },{
+            status: 201
         })
 
     } catch (error: unknown) {

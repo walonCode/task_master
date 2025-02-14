@@ -27,7 +27,7 @@ export default function Login(){
 
             await login!(username,password)
             toast('login successfully')
-            router.push('/tasks')
+            router.push('/task')
         }catch(error:unknown){
             console.log('error occurred',error)
             setErrorMessage('login failed')

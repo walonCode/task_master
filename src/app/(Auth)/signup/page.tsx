@@ -2,45 +2,41 @@
 
 import Link from "next/link"
 import { FiUser, FiMail, FiLock } from 'react-icons/fi'
-import { useState,useEffect } from "react"
-import axios from "axios"
+import { useState,useEffect,useContext } from "react"
 import { useRouter } from "next/navigation"
+import AuthContext from "@/libs/context/authContext"
+import { ToastContainer,toast } from "react-toastify"
 
 export default function Signup() {
     const [fullname, setFullname] = useState<string>("")
     const [username, setUsername] = useState<string>("")
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
+    const [jobTitle, setJobTitle] = useState<string>("")
     const [confirmPassword, setConfirmPassword] = useState<string>("")
     const [buttonDisable, setButtonDisable] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
     const [errorMessage, setErrorMessage] = useState<string>("")
     const [isChecked,setIsChecked] = useState(false)
     const router = useRouter()
+    const { signup } = useContext(AuthContext) || {}
+    
 
     useEffect(()=>{
-        setButtonDisable(!(email && password && fullname && confirmPassword && username && isChecked))
-    },[password, email, fullname, confirmPassword, username,isChecked])
+        setButtonDisable(!(email && password && fullname && confirmPassword && username && isChecked && jobTitle))
+    },[password, email, fullname, confirmPassword, username,isChecked,jobTitle])
 
     const onSignup = async(e:React.FormEvent<HTMLFormElement>) => {
         try{
             setLoading(true)
             e.preventDefault()
             if(password === confirmPassword){
-                const newUser = {
-                    username,
-                    password,
-                    email,  
-                }
-                const res = await axios.post('api/users/signup',newUser)
-                console.log(res.data)
-                if(res.status === 200){
-                    router.push('/login')
-                }else{
-                    setErrorMessage('signup failed')
-                }
+                await signup!(fullname,username,email,password,jobTitle)
+                toast('signup successfully')
+                router.push('/login')
             }else{
                 setErrorMessage('password and confirm password are not the same')
+                toast(errorMessage)
             }
            
         }catch(error){
@@ -61,7 +57,6 @@ export default function Signup() {
                                 <FiUser className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
                             </div>
                         </div>
-                        
                         <h1 className="text-3xl sm:text-4xl font-bold text-center mb-2 text-gray-800">{errorMessage ? errorMessage :"Create an Account"}</h1>
                         <p className="text-center text-gray-600 mb-8">Enter your details to get started</p>
                         
@@ -94,6 +89,22 @@ export default function Signup() {
                                         onChange={(e) => setUsername(e.target.value)}
                                         className="w-full pl-10 px-4 py-2 sm:py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200 bg-gray-50"
                                         placeholder="johndoe123"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700 block">Job Title</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <FiUser className="h-5 w-5 text-gray-400" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={jobTitle}
+                                        onChange={(e) => setJobTitle(e.target.value)}
+                                        className="w-full pl-10 px-4 py-2 sm:py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200 bg-gray-50"
+                                        placeholder="Engineer"
                                     />
                                 </div>
                             </div>
@@ -178,6 +189,11 @@ export default function Signup() {
                     </div>
                 </div>
             </div>
+            <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            />
         </div>
     )
 }

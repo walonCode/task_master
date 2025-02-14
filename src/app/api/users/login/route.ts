@@ -7,7 +7,9 @@ import { NextRequest,NextResponse } from "next/server";
 interface TokenData {
     id:string,
     username:string,
-    email:string
+    email:string,
+    fullname:string,
+    jobTitle:string
 }
 
 export async function POST(req:NextRequest){
@@ -34,11 +36,13 @@ export async function POST(req:NextRequest){
         const tokenData:TokenData = {
             id: user._id,
             username: user.username,
-            email: user.email
+            email: user.email,
+            fullname:user.fullname,
+            jobTitle:user.jobTitle,
         }
 
         // Create token
-        const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, {expiresIn: "1d"})
+        const token = jwt.sign(tokenData, process.env.ACCESS_TOKEN_SECRET!, {expiresIn: "1d"})
 
         const userResponse = user.toObject()
         delete userResponse.password
@@ -60,7 +64,8 @@ export async function POST(req:NextRequest){
         return response
 
     } catch (error: unknown) {
-        return NextResponse.json({message:'Login failed',error}, {status: 500})
+        console.error(error)
+        return NextResponse.json({message:'Login failed'}, {status: 500})
     }
 
 }

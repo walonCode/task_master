@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState,useContext } from "react";
 import {
   LayoutDashboard,
   CheckSquare,
@@ -10,13 +10,20 @@ import {
   Menu,
   User,
 } from "lucide-react";
+import axios from "axios";
+import AuthContext from "@/libs/context/authContext";
+
+
+
+const logout = async() => {
+  await axios.get('/api/users/logout')
+}
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const { isAuthenticated } = useContext(AuthContext) || {}
 
-  const handleLogin = () => setIsAuthenticated(true);
-  const handleLogout = () => setIsAuthenticated(false);
+
 
   return (
     <nav className="fixed top-0 left-0 right-0 border-b bg-white/75 backdrop-blur-sm z-50">
@@ -56,12 +63,11 @@ const Navbar = () => {
             ) : (
               // If user is not signed in
               <>
-                <button
-                  onClick={handleLogin}
+                <Link href='/login'
                   className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
                   Login
-                </button>
+                </Link>
                 <Link
                   href="/signup"
                   className="px-3 py-1 text-sm border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition"
@@ -99,7 +105,7 @@ const Navbar = () => {
             </Link>
            <div className="flex items-center justify-center">
            <button
-                  onClick={handleLogout}
+                  onClick={logout}
                   className="px-10 py-1.5 text-sm bg-red-600 font-bold  text-white rounded-lg hover:bg-red-700"
                 >
                   Logout

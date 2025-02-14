@@ -13,6 +13,11 @@ const userSchema = new Schema({
         type:String,
         required:[true, 'Please provide your fullname'],
     },
+    jobTitle:{
+        type:String,
+        required:true,
+        minlength:8,
+    },
     email: {
         type:String,
         required:[true,'Please provide an email'],

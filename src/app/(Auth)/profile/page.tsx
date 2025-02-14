@@ -1,7 +1,13 @@
+"use client"
 
+import { useContext } from "react";
+import AuthContext from "@/libs/context/authContext";
 import { CheckCircle, List, ClipboardCheck } from "lucide-react";
 
 export default function ProfilePage() {
+  // User data to be map
+  const { user } = useContext(AuthContext) || {}
+  
   return (
     <div className="flex min-h-screen p-6 flex-col items-center bg-gray-100">
       {/* Profile Section */}
