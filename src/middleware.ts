@@ -1,27 +1,33 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(req:NextRequest){
-    const path = req.nextUrl.pathname;
 
-    const isPublic = path === '/login' || path === '/signup'
+const protectedPaths = ['/dashboard', '/profile', '/task', '/project'];
 
-    const token = req.cookies.get("user")?.value || ""
-    if(isPublic && token){
-        return NextResponse.redirect(new URL('/', req.nextUrl))
+export async function middleware(request: NextRequest) {
+  const isProtectedRoute = protectedPaths.some(path =>
+    request.nextUrl.pathname.startsWith(path)
+  );
+
+  if (isProtectedRoute) {
+    const { isAuthenticated } = getKindeServerSession();
+    const isUserAuthenticated = await isAuthenticated();
+
+    console.log(isUserAuthenticated)
+
+    if (!isUserAuthenticated) {
+      return NextResponse.redirect(new URL('/', request.url));
     }
+  }
 
-    if(!isPublic && !token){
-        return NextResponse.redirect(new URL('/login',req.nextUrl))
-    }
+  return NextResponse.next();
 }
 
 export const config = {
-    matcher : [
-        '/',
-        '/profile',
-        '/profile/:path*',
-        '/login',
-        '/signup'
-    ]
-}
+  matcher: [
+    '/dashboard', 
+    '/profile',  
+    '/project/:path*',
+    '/task/:path*'
+],
+};

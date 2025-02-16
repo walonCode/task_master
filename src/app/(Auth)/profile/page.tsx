@@ -1,12 +1,13 @@
-"use client"
-
-import { useContext } from "react";
-import AuthContext from "@/libs/context/authContext";
 import { CheckCircle, List, ClipboardCheck } from "lucide-react";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
   // User data to be map
-  const { user } = useContext(AuthContext) || {}
+  const { getUser} = getKindeServerSession()
+  const user = await getUser()
+
+  console.log(user)
+
   
   return (
     <div className="flex min-h-screen p-6 flex-col items-center bg-gray-100">
@@ -16,14 +17,18 @@ export default function ProfilePage() {
         <div className="w-32 h-32 lg:w-40 lg:h-40 bg-gray-300 rounded-full"></div>
 
         {/* Profile Details */}
-        <div className="text-center lg:text-left flex-1">
-          <h1 className="text-3xl font-bold">John Doe</h1>
-          <p className="text-gray-500">johndoe@example.com</p>
-          <div className="mt-4 space-y-2">
-            <p className="text-gray-600">Task Manager | Productivity Enthusiast</p>
-            <p className="text-gray-600">Keeping track of daily, weekly, and monthly tasks</p>
-          </div>
-        </div>
+       { user ? (
+         <div className="text-center lg:text-left flex-1">
+         <h1 className="text-3xl font-bold">{user.given_name} {user.family_name}</h1>
+         <p className="text-gray-500">{user.email}</p>
+         <div className="mt-4 space-y-2">
+           <p className="text-gray-600">{user.properties?.job_title}</p>
+           <p className="text-gray-600">Keeping track of daily, weekly, and monthly tasks</p>
+         </div>
+       </div>
+       ) : (
+        <p> No User Found</p>
+       )}
       </div>
 
       {/* Task Summary Section */}

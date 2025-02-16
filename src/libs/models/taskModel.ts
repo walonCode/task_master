@@ -13,8 +13,7 @@ const taskSchema = new Schema({
         minlength: [20, 'Task description should be more than 20 character'],
     },
     userId: {
-        type:mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        type:String,
         required:true
     },
     priorty: {

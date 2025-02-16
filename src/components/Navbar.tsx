@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState,useContext } from "react";
+import { useState } from "react";
 import {
   LayoutDashboard,
   CheckSquare,
@@ -9,22 +9,14 @@ import {
   Plus,
   Menu,
   User,
+  FolderClosed
 } from "lucide-react";
-import axios from "axios";
-import AuthContext from "@/libs/context/authContext";
+import { RegisterLink,LoginLink,LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
 
 
-const logout = async() => {
-  await axios.get('/api/users/logout')
-}
-
-const Navbar = () => {
+export default function Navbar({ isAuthenticated }:{isAuthenticated:boolean}){
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isAuthenticated } = useContext(AuthContext) || {}
-
-
-
   return (
     <nav className="fixed top-0 left-0 right-0 border-b bg-white/75 backdrop-blur-sm z-50">
       <div className="container mx-auto lg:mx-20 px-4">
@@ -39,7 +31,7 @@ const Navbar = () => {
             {/* Hamburger Menu Button - Visible only on mobile */}
             
 
-            {isAuthenticated ? (
+            { isAuthenticated ? (
               // If user is signed in
               <>
               <button
@@ -63,17 +55,16 @@ const Navbar = () => {
             ) : (
               // If user is not signed in
               <>
-                <Link href='/login'
+                <LoginLink
                   className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
                   Login
-                </Link>
-                <Link
-                  href="/signup"
+                </LoginLink>
+                <RegisterLink
                   className="px-3 py-1 text-sm border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition"
                 >
                   Sign Up
-                </Link>
+                </RegisterLink>
               </>
             )}
           </div>
@@ -96,6 +87,13 @@ const Navbar = () => {
               <CheckSquare className="w-4 h-4" />
               <span>Tasks</span>
             </Link>
+            <Link 
+            href='/project'
+            className="flex items-center space-x-1 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <FolderClosed className="w-4 h-4"/>
+              <span>Projects</span>
+            </Link>
             <Link
               href="/calendar"
               className="flex items-center space-x-1 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -105,10 +103,11 @@ const Navbar = () => {
             </Link>
            <div className="flex items-center justify-center">
            <button
-                  onClick={logout}
                   className="px-10 py-1.5 text-sm bg-red-600 font-bold  text-white rounded-lg hover:bg-red-700"
                 >
+                <LogoutLink>
                   Logout
+                </LogoutLink>
             </button>
            </div>
           </div>
@@ -118,4 +117,3 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
