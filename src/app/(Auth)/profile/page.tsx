@@ -1,9 +1,11 @@
-import { CheckCircle, List, ClipboardCheck, FolderClosed } from "lucide-react";
+import { CheckCircle, List, FolderClosed,BadgeCheck } from "lucide-react";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export default async function ProfilePage() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
+
+  
 
   return (
     <div className="flex min-h-screen p-6 flex-col items-center bg-gray-100">
@@ -33,13 +35,11 @@ export default async function ProfilePage() {
       <div className="w-full max-w-4xl mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatsCard icon={<List size={32} className="text-blue-500" />} title="Total Tasks" value="35" />
         <StatsCard icon={<CheckCircle size={32} className="text-green-500" />} title="Completed Tasks" value="20" />
-        <StatsCard icon={<ClipboardCheck size={32} className="text-yellow-500" />} title="Pending Tasks" value="15" />
       </div>
 
       <div className="w-full max-w-4xl mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatsCard icon={<FolderClosed size={32} className="text-blue-500" />} title="Total Projects" value="10" />
-        <StatsCard icon={<CheckCircle size={32} className="text-green-500" />} title="Completed Projects" value="6" />
-        <StatsCard icon={<ClipboardCheck size={32} className="text-yellow-500" />} title="Active Projects" value="4" />
+        <StatsCard icon={<BadgeCheck size={32} className="text-green-500" />} title="Completed Projects" value="6" />
       </div>
     </div>
   );

@@ -38,7 +38,7 @@ const ProjectPage = () => {
         <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6">
             <h2 className="text-xl font-semibold">Projects</h2>
-            <Link href="/projects/create">
+            <Link href="/project/create">
               <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                 <FiPlus /> Add Project
               </button>

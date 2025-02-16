@@ -8,14 +8,13 @@ import {
   Calendar,
   Plus,
   Menu,
-  User,
   FolderClosed
 } from "lucide-react";
 import { RegisterLink,LoginLink,LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
 
 
-export default function Navbar({ isAuthenticated }:{isAuthenticated:boolean}){
+export default function Navbar({ isAuthenticated, name }:{isAuthenticated:boolean, name:string | undefined}){
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   return (
     <nav className="fixed top-0 left-0 right-0 border-b bg-white/75 backdrop-blur-sm z-50">
@@ -47,7 +46,7 @@ export default function Navbar({ isAuthenticated }:{isAuthenticated:boolean}){
                 </button>
                 <button className="ml-2 h-8 w-8 rounded-full bg-blue-900 text-white flex items-center justify-center">
                   <Link href="/profile">
-                    <User className="w-4 h-4" />
+                    {name?.charAt(0)}
                   </Link>
                 </button>
                 

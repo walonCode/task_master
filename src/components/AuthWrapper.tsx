@@ -14,10 +14,11 @@ export default async function NavbarWrapper(){
     const {isAuthenticated,getUser} = getKindeServerSession()
     const isUserAuthenticated = await isAuthenticated()
     const user = (await getUser()) as User | null
+    const name:  string | undefined = user?.given_name
 
     return(
         <>
-            <Navbar isAuthenticated={isUserAuthenticated}/>
+            <Navbar isAuthenticated={isUserAuthenticated} name={name}/>
             <Sidebar isAuthenticated={isUserAuthenticated} user={user}/>
         </>    
     )     

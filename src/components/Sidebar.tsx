@@ -171,7 +171,7 @@ const Sidebar = ({
                         className="w-8 h-8 rounded-full object-cover"
                       />
                     ) : (
-                      <User className="w-8 h-8 text-gray-600 shrink-0" />
+                      <div className="w-8 h-8 text-white bg-black rounded-full text-center items-center  shrink-0">{user.given_name.charAt(0)}</div>
                     )}
                   </Link>
 
