@@ -32,13 +32,16 @@ const taskSchema = new Schema({
     },
     status: {
         type:String,
-        enum: ['pending','compeleted'],
+        enum: ['pending','completed'],
         default:"pending",
     },
     createdAt : {
         type:Date,
         default:Date.now
-    }
+    },
+    projectId: {
+        type:String,
+    },
 })
 
 taskSchema.index({dueDate: 1});

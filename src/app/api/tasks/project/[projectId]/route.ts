@@ -3,10 +3,13 @@ import { NextRequest,NextResponse } from "next/server";
 import { ConnectDB } from "@/libs/configs/mongoDB";
 
 
-export async function POST(req:NextRequest){
+export async function POST(req:NextRequest, {params}:{params:{projectId:string}}){
     try{
         //starting the database
         await ConnectDB()
+
+        //get the params
+        const { projectId } = params
 
         //get data for the user
         const reqBody = await req.json()
@@ -16,7 +19,7 @@ export async function POST(req:NextRequest){
         if(!taskName || !taskDescription || !userId || !priority || !dueDate || !taskType){
             return NextResponse.json(
                 {message:'All fields required'},
-                {status:400}
+                {status: 400}
             )
         }
 
@@ -36,7 +39,8 @@ export async function POST(req:NextRequest){
             userId,
             priority,
             dueDate,
-            taskType
+            taskType,
+            projectId
         })
         
         await newTask.save()

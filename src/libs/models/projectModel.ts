@@ -22,20 +22,17 @@ const projectSchema = new Schema({
     },
     status: {
         type:String,
-        enum: ['active','compeleted','archived'],
+        enum: ['active','completed'],
         default:"pending",
     },
     createdAt : {
         type:Date,
         default:Date.now
     },
-    members: [{
-        type:String,
-    }],
     updateAt: {
         type:Date,
         default:Date.now
-    }
+    },
 })
 
 projectSchema.index({dueDate: 1});

@@ -1,4 +1,4 @@
-import Task from "@/libs/models/taskModel";
+import Project from "@/libs/models/taskModel";
 import { NextResponse,NextRequest } from "next/server";
 import { ConnectDB } from "@/libs/configs/mongoDB";
 
@@ -11,19 +11,19 @@ export async function GET(req:NextRequest,{params}:{params:{userId:string}}){
         const { userId } = params
 
         //getting all the user created task from the database
-        const task = await Task.find({userId:userId})
+        const task = await Project.find({owner:userId})
 
         //checking if the task is valid or not
         if(!task){
             return NextResponse.json(
-                {message:"Invalid Task"},
+                {message:"Invalid Project"},
                 {status:400}
             )
         }
 
         //sending tasks to user
         return NextResponse.json(
-            {message:"Task sents",task},
+            {message:"Project sents",task},
             {status:200}
         )
 
