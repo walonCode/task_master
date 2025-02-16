@@ -7,7 +7,6 @@ import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import {
   LayoutDashboard,
   CheckSquare,
-  Calendar,
   ListTodo,
   Star,
   Clock,
@@ -103,7 +102,7 @@ const Sidebar = ({
                 label="Dashboard"
               />
               <SidebarLink href="/task" icon={CheckSquare} label="My Tasks" />
-              <SidebarLink href="/calendar" icon={Calendar} label="Calendar" />
+              <SidebarLink href="/project" icon={FolderClosed} label="Projects" />
             </nav>
 
             {/* Task Filters */}

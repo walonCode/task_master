@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -10,8 +10,16 @@ import {
   FiPlus
 } from 'react-icons/fi';
 
+interface Task {
+  id: number;
+  title: string;
+  status: "pending" | "completed";
+  priority: "low" | "medium" | "high";
+  dueDate: string;
+}
+
 // Mock data
-const mockTasks = [
+const mockTasks: Task[] = [
   { id: 1, title: 'Complete project proposal', status: 'pending', priority: 'high', dueDate: '2024-03-25' },
   { id: 2, title: 'Review code changes', status: 'completed', priority: 'medium', dueDate: '2024-03-22' },
   { id: 3, title: 'Update documentation', status: 'pending', priority: 'low', dueDate: '2024-03-24' },
@@ -19,7 +27,7 @@ const mockTasks = [
 ];
 
 const DashboardPage = () => {
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'completed'>('all');
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 lg:ml-[68px]">
@@ -48,7 +56,7 @@ const DashboardPage = () => {
             {['all', 'pending', 'completed'].map((tab) => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => setActiveTab(tab as 'all' | 'pending' | 'completed')}
                 className={`pb-2 px-2 capitalize whitespace-nowrap ${
                   activeTab === tab
                     ? 'border-b-2 border-blue-600 text-blue-600'
@@ -86,7 +94,7 @@ const StatsCard = ({ icon, title, value }: { icon: React.ReactNode; title: strin
   </div>
 );
 
-const TaskCard = ({ task }: { task: any }) => (
+const TaskCard = ({ task }: { task: Task }) => (
   <div className="p-4 border rounded-lg hover:shadow-md transition-shadow">
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
       <div className="flex-1 min-w-0">
