@@ -1,9 +1,6 @@
 "use client"
-
 import { createContext,useState } from "react";
 import axios from "axios";
-import getUserId from "@/app/(Actions)/getUserId";
-
 
 interface Task {
     _id: string;
@@ -28,7 +25,7 @@ const TaskContext = createContext<TaskProp | undefined>(undefined);
 
 export const TaskProvider = ({children}:{children:React.ReactNode}) => {
     const [task, setTask] = useState<Task[]>([])
-    const user = getUserId()
+    
 
     const createTask = async(taskName:string, taskDescription:string, priority:string, dueDate:string, taskType:string) => {
         try{
@@ -38,9 +35,8 @@ export const TaskProvider = ({children}:{children:React.ReactNode}) => {
                 priority, 
                 dueDate, 
                 taskType,
-                userId:(await user).id
             }
-            const res = await axios.post('/api/task',newTask);
+            const res = await axios.post('/api/tasks',newTask);
             setTask(task.concat(res.data.newTask))
         }catch(error){
             console.error(error)

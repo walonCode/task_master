@@ -8,14 +8,17 @@ import {
   Calendar,
   Plus,
   Menu,
-  FolderClosed
+  FolderClosed,
+  LogIn,
+  UserPlus,
+  LogOut
 } from "lucide-react";
-import { RegisterLink,LoginLink,LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { RegisterLink, LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { Button } from "@/components/ui/button";
 
-
-
-export default function Navbar({ isAuthenticated, name }:{isAuthenticated:boolean, name:string | undefined}){
+export default function Navbar({ isAuthenticated, name }: { isAuthenticated: boolean; name: string | undefined }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <nav className="fixed top-0 left-0 right-0 border-b bg-white/75 backdrop-blur-sm z-50">
       <div className="container mx-auto lg:mx-20 px-4">
@@ -27,42 +30,41 @@ export default function Navbar({ isAuthenticated, name }:{isAuthenticated:boolea
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-2">
-            {/* Hamburger Menu Button - Visible only on mobile */}
-            
-
-            { isAuthenticated ? (
-              // If user is signed in
+            {isAuthenticated ? (
               <>
-              <button
-              className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                {/* Mobile Menu Button */}
+                <button
+                  className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                  <Menu className="w-5 h-5" />
+                </button>
+
+                {/* Create Task Button */}
+                <Button variant="outline" size="icon" asChild>
                   <Link href="/task/create">
                     <Plus className="w-5 h-5" />
                   </Link>
-                </button>
-                <button className="ml-2 h-8 w-8 rounded-full bg-blue-900 text-white flex items-center justify-center">
-                  <Link href="/profile">
-                    {name?.charAt(0)}
+                </Button>
+
+                {/* Profile Button */}
+                <Button variant="secondary" className="ml-2 h-8 w-8 rounded-full">
+                  <Link href="/profile" className="text-black font-bold">
+                    {name?.charAt(0).toUpperCase()}
                   </Link>
-                </button>
-                
+                </Button>
               </>
             ) : (
-              // If user is not signed in
               <>
-                <LoginLink
-                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Login
+                <LoginLink>
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <LogIn className="w-4 h-4" /> Login
+                  </Button>
                 </LoginLink>
-                <RegisterLink
-                  className="px-3 py-1 text-sm border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition"
-                >
-                  Sign Up
+                <RegisterLink>
+                  <Button variant="default" className="flex items-center gap-2">
+                    <UserPlus className="w-4 h-4" /> Sign Up
+                  </Button>
                 </RegisterLink>
               </>
             )}
@@ -72,47 +74,28 @@ export default function Navbar({ isAuthenticated, name }:{isAuthenticated:boolea
         {/* Mobile Menu */}
         {isMobileMenuOpen && isAuthenticated && (
           <div className="lg:hidden py-4 border-t">
-            <Link
-              href="/dashboard"
-              className="flex items-center space-x-1 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span>Dashboard</span>
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <LayoutDashboard className="w-4 h-4" /> Dashboard
             </Link>
-            <Link
-              href="/task"
-              className="flex items-center space-x-1 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <CheckSquare className="w-4 h-4" />
-              <span>Tasks</span>
+            <Link href="/task" className="flex items-center gap-2">
+              <CheckSquare className="w-4 h-4" /> Tasks
             </Link>
-            <Link 
-            href='/project'
-            className="flex items-center space-x-1 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <FolderClosed className="w-4 h-4"/>
-              <span>Projects</span>
+            <Link href="/project" className="flex items-center gap-2">
+              <FolderClosed className="w-4 h-4" /> Projects
             </Link>
-            <Link
-              href="/calendar"
-              className="flex items-center space-x-1 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <Calendar className="w-4 h-4" />
-              <span>Calendar</span>
+            <Link href="/calendar" className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" /> Calendar
             </Link>
-           <div className="flex items-center justify-center">
-           <button
-                  className="px-10 py-1.5 text-sm bg-red-600 font-bold  text-white rounded-lg hover:bg-red-700"
-                >
-                <LogoutLink>
-                  Logout
-                </LogoutLink>
-            </button>
-           </div>
+            <div className="flex items-center justify-center mt-4">
+              <LogoutLink>
+                <Button variant="destructive" className="flex items-center gap-2">
+                  <LogOut className="w-4 h-4" /> Logout
+                </Button>
+              </LogoutLink>
+            </div>
           </div>
         )}
       </div>
     </nav>
   );
-};
-
+}

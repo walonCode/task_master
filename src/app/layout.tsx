@@ -32,7 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NavbarWrapper />
-        <main className="pt-16">
+        <main className="pt-16 bg-gray-50">
             <TaskProvider>
               {children}
             </TaskProvider>
