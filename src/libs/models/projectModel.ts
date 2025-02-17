@@ -13,7 +13,8 @@ const projectSchema = new Schema({
         minlength: [20, 'Task description should be more than 20 character'],
     },
     owner: {
-        type:String,
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
         required:true
     },
     dueDate: {
@@ -33,6 +34,10 @@ const projectSchema = new Schema({
         type:Date,
         default:Date.now
     },
+    tasks:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Task"
+    }]
 })
 
 projectSchema.index({dueDate: 1});

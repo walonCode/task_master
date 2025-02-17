@@ -1,6 +1,8 @@
 import { NextResponse,NextRequest } from "next/server";
 import Project from "@/libs/models/projectModel";
 import { ConnectDB } from "@/libs/configs/mongoDB";
+import User from "@/libs/models/userModel";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 
 export async function POST(req:NextRequest){
@@ -8,12 +10,24 @@ export async function POST(req:NextRequest){
         // connecting to the database
         await ConnectDB()
 
+        //getting the user
+        const { getUser } = getKindeServerSession()
+        const kindeUser = await getUser()
+
+        const user = await User.findOne({kindUserId:kindeUser.id})
+        if(!user){
+            return NextResponse.json(
+                {message:"User is not authenticated"},
+                {status: 401}
+            )
+        }
+
         //getting data from the user
         const reqBody = await req.json()
-        const { projectName,projectDescription,dueDate,owner} = reqBody;
+        const { projectName,projectDescription,dueDate} = reqBody;
 
         //validating the data
-        if(!projectName || !projectDescription || !dueDate || !owner){
+        if(!projectName || !projectDescription || !dueDate ){
             return NextResponse.json(
                 {message:"All fields required"},
                 {status: 400}
@@ -34,9 +48,13 @@ export async function POST(req:NextRequest){
             projectName,
             projectDescription,
             dueDate,
-            owner
+            owner:user._id
         })
 
+        //add projects to the user
+        user.projects.push(newProject._id)
+        await user.save()
+        
         await newProject.save();
 
         //returning created project to the user

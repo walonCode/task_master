@@ -1,6 +1,9 @@
 import Task from "@/libs/models/taskModel";
 import { NextRequest,NextResponse } from "next/server";
 import { ConnectDB } from "@/libs/configs/mongoDB";
+import User from "@/libs/models/userModel";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import Project from "@/libs/models/projectModel";
 
 
 export async function POST(req:NextRequest, {params}:{params:{projectId:string}}){
@@ -8,15 +11,36 @@ export async function POST(req:NextRequest, {params}:{params:{projectId:string}}
         //starting the database
         await ConnectDB()
 
+        //getting the userId
+        const { getUser } = getKindeServerSession()
+        const kindeUser = await getUser()
+
+        const user = await User.findOne({userId:kindeUser.id})
+        if(!user){
+            return NextResponse.json(
+                {message:"User not authenticated"},
+                {status: 401}
+            )
+        }
+
         //get the params
         const { projectId } = params
 
+        //finding the project in the database
+        const project = await Project.findOne({projectId})
+        if(!project){
+            return NextResponse.json(
+                {message:"Invalid projectId"},
+                {status: 400}
+            )
+        }
+
         //get data for the user
         const reqBody = await req.json()
-        const { taskName, taskDescription, userId, priority, dueDate, taskType} = reqBody
+        const { taskName, taskDescription,  priority, dueDate, taskType} = reqBody
 
         //checking if the fields have values
-        if(!taskName || !taskDescription || !userId || !priority || !dueDate || !taskType){
+        if(!taskName || !taskDescription  || !priority || !dueDate || !taskType){
             return NextResponse.json(
                 {message:'All fields required'},
                 {status: 400}
@@ -36,12 +60,20 @@ export async function POST(req:NextRequest, {params}:{params:{projectId:string}}
         const newTask = new Task({
             taskName,
             taskDescription,
-            userId,
+            userId:user._id,
             priority,
             dueDate,
             taskType,
             projectId
         })
+
+        //add task to the user
+        user.tasks.push(newTask._id)
+        await user.save()
+
+        //adding  task to the project
+        project.tasks.push(newTask._id)
+        await project.save()
         
         await newTask.save()
 

@@ -1,20 +1,31 @@
 "use client";
 
-import { useState } from "react";
-import { Calendar, Flag, Layout, ListTodo, Tag, Users, User } from "lucide-react";
+import { useState,useContext } from "react";
+import { Calendar, Flag, Layout, ListTodo, Tag} from "lucide-react";
+import { ToastContainer,toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import TaskContext from "@/libs/context/taskContext";
 
 export default function CreateTask() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [taskName, setTaskName] = useState("");
+  const [taskDescription, setTaskDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [assignees, setAssignees] = useState("");
-  const [userId, setUserId] = useState("");
   const [priority, setPriority] = useState("medium");
   const [taskType, setTaskType] = useState("");
+  const router = useRouter()
+  const { createTask } = useContext(TaskContext) || {}
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission logic here
+    try {
+      const task = await createTask!(taskName,taskDescription,priority,dueDate,taskType)
+      toast('task created')
+      console.log(task)
+      router.push('/task')
+    }catch(error){
+      console.error(error)
+      toast('task creation failed')
+    }
   };
 
   return (
@@ -37,8 +48,8 @@ export default function CreateTask() {
                 <input
                   type="text"
                   id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  value={taskName}
+                  onChange={(e) => setTaskName(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter task title"
                   required
@@ -52,8 +63,8 @@ export default function CreateTask() {
                 </label>
                 <textarea
                   id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  value={taskDescription}
+                  onChange={(e) => setTaskDescription(e.target.value)}
                   rows={4}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter task description"
@@ -64,22 +75,6 @@ export default function CreateTask() {
 
             {/* Task Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="userId" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                  <User className="w-4 h-4" />
-                  Created By
-                </label>
-                <input
-                  type="text"
-                  id="userId"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter user ID"
-                  required
-                />
-              </div>
-
               <div>
                 <label htmlFor="taskType" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
                   <Tag className="w-4 h-4" />
@@ -93,10 +88,10 @@ export default function CreateTask() {
                   required
                 >
                   <option value="">Select task type</option>
-                  <option value="feature">Daily</option>
-                  <option value="bug">Monthly</option>
-                  <option value="improvement">Weekly</option>
-                  <option value="maintenance">One-Time</option>
+                  <option value="daily">Daily</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="one-time">One-Time</option>
                 </select>
               </div>
 
@@ -132,21 +127,6 @@ export default function CreateTask() {
                   required
                 />
               </div>
-
-              <div className="md:col-span-2">
-                <label htmlFor="assignees" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                  <Users className="w-4 h-4" />
-                  Assignees
-                </label>
-                <input
-                  type="text"
-                  id="assignees"
-                  value={assignees}
-                  onChange={(e) => setAssignees(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter assignee names"
-                />
-              </div>
             </div>
           </div>
 
@@ -165,6 +145,11 @@ export default function CreateTask() {
             </button>
           </div>
         </form>
+        <ToastContainer 
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        />
       </div>
     </div>
   );
