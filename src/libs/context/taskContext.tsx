@@ -1,5 +1,5 @@
 "use client"
-import { createContext,useState } from "react";
+import { createContext,useState,useEffect } from "react";
 import axios from "axios";
 
 interface Task {
@@ -42,6 +42,19 @@ export const TaskProvider = ({children}:{children:React.ReactNode}) => {
             console.error(error)
         }
     }
+
+    useEffect(() => {
+        async function getTask(){
+            try{
+                const res = await axios.get('/api/tasks/user')
+                console.log(res.data.task)
+                setTask(task.concat(res.data.task))
+            }catch(error){
+                console.error(error)
+            }
+        }
+        getTask()
+    },[])
 
     return(
         <TaskContext.Provider value={{

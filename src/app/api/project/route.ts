@@ -14,11 +14,18 @@ export async function POST(req:NextRequest){
         const { getUser } = getKindeServerSession()
         const kindeUser = await getUser()
 
-        const user = await User.findOne({kindUserId:kindeUser.id})
-        if(!user){
+        if(!kindeUser){
             return NextResponse.json(
                 {message:"User is not authenticated"},
                 {status: 401}
+            )
+        }
+
+        const user = await User.findOne({kindeUserId:kindeUser.id})
+        if(!user){
+            return NextResponse.json(
+                {message:"User not found"},
+                {status: 404}
             )
         }
 

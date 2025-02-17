@@ -25,10 +25,10 @@ export async function GET(){
         const task = await Task.find({userId:user._id})
 
         //checking if the task is valid or not
-        if(!task){
+        if(task.length == 0){
             return NextResponse.json(
-                {message:"Invalid Task"},
-                {status:400}
+                {message:"Task is empty",task:[]},
+                {status: 200}
             )
         }
 

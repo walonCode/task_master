@@ -1,24 +1,33 @@
 "use client"
 
-import { useState } from "react";
+import { useState,useContext } from "react";
 import { FilePlus, Loader2 } from "lucide-react";
+import ProjectContext from "@/libs/context/projectContext";
+import { ToastContainer,toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function CreateProjectPage() {
-  const [project, setProject] = useState<{ title: string; description: string; deadline: string }>({ title: "", description: "", deadline: "" });
+  const [projectName, setProjectName] = useState<string>("")
+  const [projectDescription, setProjectDescription] = useState<string>("")
+  const [dueDate, setDueDate] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false);
+  const { createProject } = useContext(ProjectContext) || {};
+  const router = useRouter()
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setProject({ ...project, [e.target.name]: e.target.value });
-  };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      alert("Project Created Successfully!");
-      setProject({ title: "", description: "", deadline: "" });
-    }, 2000);
+    try{
+      setLoading(true)
+      await createProject!(projectName,projectDescription,dueDate)
+      toast('project created')
+      router.push('/project')
+    }catch(error){
+      console.error(error)
+      toast('project creation failed')
+    }finally{
+      setLoading(false)
+    }
   };
 
   return (
@@ -35,8 +44,8 @@ export default function CreateProjectPage() {
             <input 
               type="text" 
               name="title" 
-              value={project.title} 
-              onChange={handleChange} 
+              value={projectName} 
+              onChange={(e) => setProjectName(e.target.value)} 
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter project title" 
               required
@@ -47,8 +56,8 @@ export default function CreateProjectPage() {
             <label className="block text-gray-700 font-medium">Description</label>
             <textarea 
               name="description" 
-              value={project.description} 
-              onChange={handleChange} 
+              value={projectDescription} 
+              onChange={(e) => setProjectDescription(e.target.value)} 
               rows={4}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter project description" 
@@ -61,8 +70,8 @@ export default function CreateProjectPage() {
             <input 
               type="date" 
               name="deadline" 
-              value={project.deadline} 
-              onChange={handleChange} 
+              value={dueDate} 
+              onChange={ (e) => setDueDate(e.target.value)} 
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -76,6 +85,11 @@ export default function CreateProjectPage() {
             {loading ? <Loader2 size={20} className="animate-spin" /> : "Create Project"}
           </button>
         </form>
+        <ToastContainer
+        autoClose={5000}
+        hideProgressBar={false}
+        position="top-right"
+        />
       </div>
     </div>
   );

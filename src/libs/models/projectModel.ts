@@ -18,13 +18,13 @@ const projectSchema = new Schema({
         required:true
     },
     dueDate: {
-        type:Date,
+        type:String,
         required:true,
     },
     status: {
         type:String,
         enum: ['active','completed'],
-        default:"pending",
+        default:"active",
     },
     createdAt : {
         type:Date,

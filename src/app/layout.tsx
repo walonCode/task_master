@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import "react-toastify/dist/ReactToastify.css";
 import NavbarWrapper from "@/components/AuthWrapper";
 import { TaskProvider } from "@/libs/context/taskContext";
+import { ProjectProvider } from "@/libs/context/projectContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +35,9 @@ export default function RootLayout({
         <NavbarWrapper />
         <main className="pt-16 bg-gray-50">
             <TaskProvider>
-              {children}
+              <ProjectProvider>
+                {children}
+              </ProjectProvider>
             </TaskProvider>
         </main>
         <Footer />

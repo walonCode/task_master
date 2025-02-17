@@ -1,84 +1,83 @@
 import Task from "@/libs/models/taskModel";
-import { NextRequest,NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { ConnectDB } from "@/libs/configs/mongoDB";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import User from "@/libs/models/userModel";
 
+export async function POST(req: NextRequest) {
+  try {
+    // Connect to the database
+    await ConnectDB();
 
-export async function POST(req:NextRequest){
-    try{
-        //starting the database
-        await ConnectDB()
+    // Get user from session
+    const { getUser } = getKindeServerSession();
+    const kindeUser = await getUser();
 
-        //getting a user
-        const {getUser} = getKindeServerSession()
-        const kindeUser = await getUser()
-
-        if(!kindeUser){
-            return NextResponse.json(
-                {message:"User not authenticated"},
-                {status: 401}
-            )
-        }
-
-        //get data for the user
-        const reqBody = await req.json()
-        const { taskName, taskDescription,  priority, dueDate, taskType} = reqBody
-
-        //checking if the fields have values
-        if(!taskName || !taskDescription || !priority || !dueDate || !taskType){
-            return NextResponse.json(
-                {message:'All fields required'},
-                {status:400}
-            )
-        }
-
-        //checking to see it a user already exist if not crreate a new user in the data base
-        const user = await User.findOne({kindeUserId:kindeUser.id})
-        if(!user){
-            const newUser = new User({
-                username:kindeUser.username,
-                fullanme: `${kindeUser.given_name} ${kindeUser.family_name}`,
-                email: kindeUser.email,
-                kindUserId:kindeUser.id
-            })
-            await newUser.save()
-            
-            //checking if the task already exist with that taskname
-            const task = await Task.findOne({taskName})
-            if(task){
-                return NextResponse.json(
-                    {message:'Task already exist'},
-                    {status:409}
-                )
-            }
-        
-            // adding a new task to the database
-            const newTask = new Task({
-                taskName,
-                taskDescription,
-                userId:newUser._id,
-                priority,
-                dueDate,
-                taskType
-            })
-            //pushing newTask id in to the task array in the user model
-            newUser.tasks.push(newTask._id)
-            await newUser.save()
-            
-            await newTask.save()
-
-            //sending the response and created task to the user
-            return NextResponse.json(
-                {message:"Task created",newTask},
-                {status:201}
-            )
-        } 
-    }catch(error){
-        console.error(error)
-        return NextResponse.json(
-            {message:'Server error'},
-            {status:500}
-        )
+    if (!kindeUser) {
+      return NextResponse.json(
+        { message: "User not authenticated" },
+        { status: 401 }
+      );
     }
+
+    // Parse request body
+    const reqBody = await req.json();
+    const { taskName, taskDescription, priority, dueDate, taskType } = reqBody;
+
+    if (!taskName || !taskDescription || !priority || !dueDate || !taskType) {
+      return NextResponse.json(
+        { message: "All fields required" },
+        { status: 400 }
+      );
+    }
+
+    // Check if user exists
+    let user = await User.findOne({ kindeUserId: kindeUser.id });
+
+    if (!user) {
+      user = new User({
+        username: kindeUser.username,
+        fullname: `${kindeUser.given_name} ${kindeUser.family_name}`,
+        email: kindeUser.email,
+        kindeUserId: kindeUser.id,
+      });
+      await user.save();
+    }
+
+    // Check if the task already exists for this user
+    const existingTask = await Task.findOne({
+      taskName,
+      userId: user._id,
+    });
+
+    if (existingTask) {
+      return NextResponse.json(
+        { message: "Task already exists" },
+        { status: 409 }
+      );
+    }
+
+    // Create new task
+    const newTask = new Task({
+      taskName,
+      taskDescription,
+      userId: user._id,
+      priority,
+      dueDate,
+      taskType,
+    });
+
+    // Save task and update user
+    await newTask.save();
+    user.tasks.push(newTask._id);
+    await user.save();
+
+    return NextResponse.json(
+      { message: "Task created", newTask },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  }
 }
