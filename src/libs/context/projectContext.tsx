@@ -9,8 +9,8 @@ interface Project {
     owner: string;
     dueDate: string; 
     status: 'active' | 'completed';
-    createdAt?: Date;
-    updatedAt?:Date
+    createdAt?: string;
+    updatedAt?:string
     task?: Task[] 
 }
 
@@ -19,23 +19,28 @@ interface Task {
     taskName: string;
     taskDescription: string;
     userId: string;
-    priorty: 'low' | 'medium' | 'high';
-    dueDate: Date; 
+    priority: 'low' | 'medium' | 'high';
+    dueDate: string; 
     taskType: 'daily' | 'weekly' | 'monthly' | 'one-time';
     status: 'pending' | 'completed';
-    createdAt: Date;
+    createdAt: string;
     projectId?: string; 
 }
 
 interface ProjectProps {
     createProject:(projectName:string,projectDescription:string,dueDate:string) => Promise<void>;
-    project:Project[]
+    project:Project[] | [];
+    totalProject: number | undefined;
+    completedProject : number | undefined
 }
 
 const ProjectContext = createContext<ProjectProps | undefined>(undefined);
 
 export const ProjectProvider = ({children}:{children:React.ReactNode}) => {
     const[project, setProject] = useState<Project[]>([])
+    const [totalProject, setTotalProject]= useState<number>()
+    const [completedProject, setCompletedProject] = useState<number>()
+
 
     const createProject = async(projectName:string,projectDescription:string,dueDate:string):Promise<void> => {
         try{
@@ -62,12 +67,21 @@ export const ProjectProvider = ({children}:{children:React.ReactNode}) => {
                 console.error(error)
             }
         }
+        async function getProjectTotal(){
+            const res = await axios.get('/api/project/user/summary')
+            console.log(res.data)
+            setTotalProject(res.data.totalProjects)
+            setCompletedProject(res.data.completedProjects)
+        }
+        getProjectTotal()
         getProject()
     },[])
     return(
         <ProjectContext.Provider value={{
             createProject,
-            project
+            project,
+            totalProject,
+            completedProject
         }}>
             {children}
         </ProjectContext.Provider>

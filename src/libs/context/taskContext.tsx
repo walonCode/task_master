@@ -7,17 +7,20 @@ interface Task {
     taskName: string;
     taskDescription: string;
     userId: string;
-    priorty: 'low' | 'medium' | 'high';
-    dueDate: Date; 
+    priority: 'low' | 'medium' | 'high';
+    dueDate: string; 
     taskType: 'daily' | 'weekly' | 'monthly' | 'one-time';
     status: 'pending' | 'completed';
-    createdAt: Date;
+    createdAt: string;
     projectId?: string; 
 }
 
 interface TaskProp {
     createTask: (taskName:string, taskDescription:string, priority:string, dueDate:string, taskType:string) => Promise<void>
-    task: Task[]
+    task: Task[] | [];
+    totalTask:number | undefined;
+    completedTask: number | undefined,
+    pendingTask: number | undefined
 }
 
 
@@ -25,6 +28,9 @@ const TaskContext = createContext<TaskProp | undefined>(undefined);
 
 export const TaskProvider = ({children}:{children:React.ReactNode}) => {
     const [task, setTask] = useState<Task[]>([])
+    const [totalTask, setTotalTask]= useState<number>()
+    const [completedTask, setCompletedTask] = useState<number>()
+    const [pendingTask, setPendingTask] = useState<number>()
     
 
     const createTask = async(taskName:string, taskDescription:string, priority:string, dueDate:string, taskType:string) => {
@@ -53,13 +59,24 @@ export const TaskProvider = ({children}:{children:React.ReactNode}) => {
                 console.error(error)
             }
         }
+        async function getTaskTotal(){
+            const res = await axios.get('/api/tasks/user/summary')
+            console.log(res.data)
+            setTotalTask(res.data.totalTasks)
+            setCompletedTask(res.data.completedTasks)
+            setPendingTask(res.data.pendingTasks)
+        }
+        getTaskTotal()
         getTask()
     },[])
 
     return(
         <TaskContext.Provider value={{
             createTask,
-            task
+            task,
+            totalTask,
+            completedTask,
+            pendingTask
         }}>
             {children}
         </TaskContext.Provider>

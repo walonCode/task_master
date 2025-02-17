@@ -32,15 +32,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NavbarWrapper />
-        <main className="pt-16 bg-gray-50">
+        <main className="pt-16 bg-gray-50"> 
+          <NavbarWrapper />
             <TaskProvider>
               <ProjectProvider>
                 {children}
               </ProjectProvider>
             </TaskProvider>
-        </main>
-        <Footer />
+          <Footer />
+        </main> 
       </body>
     </html>
   );

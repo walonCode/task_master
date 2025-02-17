@@ -17,6 +17,7 @@ import {
   PanelLeft,
   LogOut,
   User,
+  Calendar
 } from "lucide-react";
 import Image from "next/image";
 
@@ -101,6 +102,7 @@ const Sidebar = ({
                 icon={LayoutDashboard}
                 label="Dashboard"
               />
+              <SidebarLink href="/calendar" icon={Calendar} label="Calendar"/>
               <SidebarLink href="/task" icon={CheckSquare} label="My Tasks" />
               <SidebarLink href="/project" icon={FolderClosed} label="Projects" />
             </nav>

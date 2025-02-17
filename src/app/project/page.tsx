@@ -1,37 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Link from "next/link";
 import { FiFolder, FiCheck, FiPlus } from "react-icons/fi";
+import ProjectContext from "@/libs/context/projectContext";
 
-// Project Data Type
 interface Project {
-  id: number;
-  name: string;
-  description: string;
-  status: "active" | "completed";
+  _id: string;
+  projectName: string;
+  projectDescription: string;
+  owner: string;
+  dueDate: string; 
+  status: 'active' | 'completed';
+  createdAt?: string;
+  updatedAt?:string
+  task?: Task[] 
 }
 
-// Mock Project Data
-const mockProjects: Project[] = [
-  { id: 1, name: "Task Master App", description: "Manage tasks efficiently.", status: "active" },
-  { id: 2, name: "Portfolio Website", description: "Personal website development.", status: "completed" },
-  { id: 3, name: "E-commerce Platform", description: "Building an online store.", status: "active" },
-];
+interface Task {
+  _id: string;
+  taskName: string;
+  taskDescription: string;
+  userId: string;
+  priority: 'low' | 'medium' | 'high';
+  dueDate: string; 
+  taskType: 'daily' | 'weekly' | 'monthly' | 'one-time';
+  status: 'pending' | 'completed';
+  createdAt: string;
+  projectId?: string; 
+}
+
 
 const ProjectPage = () => {
+  const { project } = useContext(ProjectContext) || {}
   const [activeTab, setActiveTab] = useState<"all" | "active" | "completed">("all");
 
   // Filter projects based on activeTab
-  const filteredProjects = activeTab === "all" ? mockProjects : mockProjects.filter((p) => p.status === activeTab);
+  const filteredProjects = activeTab === "all" ? project : project!.filter((p) => p.status === activeTab);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 lg:ml-[68px]">
       <div className="max-w-5xl mx-auto">
         {/* Stats Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-          <StatsCard icon={<FiFolder />} title="Total Projects" value={mockProjects.length.toString()} />
-          <StatsCard icon={<FiCheck />} title="Completed Projects" value={mockProjects.filter(p => p.status === 'completed').length.toString()} />
+          <StatsCard icon={<FiFolder />} title="Total Projects" value={project!.length.toString()} />
+          <StatsCard icon={<FiCheck />} title="Completed Projects" value={project!.filter(p => p.status === 'completed').length.toString()} />
         </div>
 
         {/* Projects Section */}
@@ -62,8 +75,8 @@ const ProjectPage = () => {
 
           {/* Project List */}
           <div className="space-y-4">
-            {filteredProjects.length > 0 ? (
-              filteredProjects.map((project) => <ProjectCard key={project.id} project={project} />)
+            {filteredProjects!.length > 0 ? (
+              filteredProjects!.map((project) => <ProjectCard key={project._id} project={project} />)
             ) : (
               <p className="text-gray-500 text-center py-4">No projects found.</p>
             )}
@@ -90,8 +103,8 @@ const ProjectCard = ({ project }: { project: Project }) => (
   <div className="p-4 border rounded-lg hover:shadow-md transition-shadow bg-white">
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
       <div className="flex-1 min-w-0">
-        <h3 className="font-medium truncate">{project.name}</h3>
-        <p className="text-sm text-gray-500 mt-1">{project.description}</p>
+        <h3 className="font-medium truncate">{project.projectName}</h3>
+        <p className="text-sm text-gray-500 mt-1">{project.projectDescription}</p>
       </div>
       <div className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
         project.status === "active" ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"
