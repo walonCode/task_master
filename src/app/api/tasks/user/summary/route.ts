@@ -1,5 +1,5 @@
 import Task from "@/libs/models/taskModel";
-import { NextResponse } from "next/server";
+import {  NextResponse } from "next/server";
 import { ConnectDB } from "@/libs/configs/mongoDB";
 import User from "@/libs/models/userModel";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
@@ -10,6 +10,14 @@ export async function GET() {
 
     const { getUser } = getKindeServerSession()
     const kindeUser = await getUser()
+    
+
+    if(!kindeUser){
+      return NextResponse.json(
+        {message:"User is not authenticated"},
+        {status: 401}
+      )
+    }
     const user = await User.findOne({kindeUserId:kindeUser.id})
 
     if(!user){

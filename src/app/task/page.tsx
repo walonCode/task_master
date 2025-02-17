@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { CalendarDays, Clock, CheckCircle2, AlertCircle } from 'lucide-react'
+import React, { useState } from 'react'
+import { CalendarDays, Clock, CheckCircle2, AlertCircle, ListChecks, ClipboardCheck, ClipboardX, } from 'lucide-react'
 
 interface Task {
   id: number
@@ -72,6 +72,9 @@ const mockTasks: Task[] = [
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>(mockTasks)
+  const completedTasks = tasks.filter(task => task.status === 'completed').length;
+  const pendingTasks = tasks.filter(task => task.status === 'pending').length;
+  const totalTasks = tasks.length;
 
   const groupTasks = () => {
     const today = new Date()
@@ -104,7 +107,7 @@ export default function TaskPage() {
     }
   }
 
-  const TaskGroup = ({ tasks, title, icon: Icon }: { tasks: Task[], title: string, icon: any }) => (
+  const TaskGroup = ({ tasks, title, icon: Icon }: { tasks: Task[], title: string, icon: React.FC }) => (
     <div className="mb-6 lg:mb-8 bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-200">
       <div className="flex items-center gap-2 mb-4 lg:mb-6">
         <Icon className="w-5 h-5 lg:w-6 lg:h-6 text-gray-700" />
@@ -183,6 +186,29 @@ export default function TaskPage() {
               <div className="flex items-center gap-1">
                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
                 <span>Low Priority</span>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div className="bg-white p-4 rounded-lg shadow flex items-center gap-4">
+              <ListChecks className="w-8 h-8 text-blue-500" />
+              <div>
+                <p className="text-gray-600 text-sm">Total Tasks</p>
+                <p className="text-xl font-semibold text-gray-900">{totalTasks}</p>
+              </div>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow flex items-center gap-4">
+              <ClipboardCheck className="w-8 h-8 text-green-500" />
+              <div>
+                <p className="text-gray-600 text-sm">Completed</p>
+                <p className="text-xl font-semibold text-gray-900">{completedTasks}</p>
+              </div>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow flex items-center gap-4">
+              <ClipboardX className="w-8 h-8 text-red-500" />
+              <div>
+                <p className="text-gray-600 text-sm">Pending</p>
+                <p className="text-xl font-semibold text-gray-900">{pendingTasks}</p>
               </div>
             </div>
           </div>
