@@ -3,6 +3,7 @@ import Project from "@/libs/models/projectModel";
 import { ConnectDB } from "@/libs/configs/mongoDB";
 import User from "@/libs/models/userModel";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { revalidatePath } from "next/cache";
 
 
 export async function POST(req:NextRequest){
@@ -64,6 +65,9 @@ export async function POST(req:NextRequest){
         
         await newProject.save();
 
+        //reloading the project page to get the new project
+        revalidatePath('/project')
+        
         //returning created project to the user
         return NextResponse.json(
             {message:"Project created successfully",newProject},

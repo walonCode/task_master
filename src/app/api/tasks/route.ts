@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ConnectDB } from "@/libs/configs/mongoDB";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import User from "@/libs/models/userModel";
+import { revalidatePath } from "next/cache";
 
 export async function POST(req: NextRequest) {
   try {
@@ -71,6 +72,9 @@ export async function POST(req: NextRequest) {
     await newTask.save();
     user.tasks.push(newTask._id);
     await user.save();
+    
+    //reloading the task page to get the new task
+    revalidatePath('/task')
 
     return NextResponse.json(
       { message: "Task created", newTask },

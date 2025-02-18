@@ -1,6 +1,6 @@
-'use client'
-import React, { useContext } from 'react'
-import { CalendarDays, Clock, CheckCircle2, AlertCircle, ListChecks, ClipboardCheck, ClipboardX } from 'lucide-react'
+"use client"
+import React, { useContext, useState } from 'react'
+import { CalendarDays, Clock, ListChecks, ClipboardCheck, ClipboardX, Trash2 } from 'lucide-react'
 import TaskContext from '@/libs/context/taskContext'
 
 interface Task {
@@ -18,19 +18,31 @@ interface Task {
 
 export default function TaskPage() {
   const { task } = useContext(TaskContext) || {}
+  const checked = true
+  const [filter, setFilter] = useState<'all' | 'completed' | 'pending'>('all');
+
+  const handleDelete = (taskId: string) => {
+    console.log(`Deleting task with ID: ${taskId}`);
+  };
+
+  const toggleTaskStatus = (taskId: string) => {
+    console.log(`Toggling task status for ID: ${taskId}`);
+  };
+
+  const filteredTasks = task!.filter(t => 
+    filter === 'all' ? true : filter === 'completed' ? t.status === 'completed' : t.status === 'pending'
+  );
 
   const completedTasks = task!.filter(task => task.status === 'completed').length;
   const pendingTasks = task!.filter(task => task.status === 'pending').length;
   const totalTasks = task!.length;
 
-  const groupTasks = () => {
-    return {
-      daily: task!.filter(task => task.taskType === 'daily'),
-      weekly: task!.filter(task => task.taskType === 'weekly'),
-      monthly: task!.filter(task => task.taskType === 'monthly'),
-      oneTime: task!.filter(task => task.taskType === 'one-time')
-    }
-  }
+  const groupTasks = () => ({
+    daily: filteredTasks.filter(task => task.taskType === 'daily'),
+    weekly: filteredTasks.filter(task => task.taskType === 'weekly'),
+    monthly: filteredTasks.filter(task => task.taskType === 'monthly'),
+    oneTime: filteredTasks.filter(task => task.taskType === 'one-time')
+  });
 
   const TaskGroup = ({ tasks, title, icon: Icon }: { tasks: Task[], title: string, icon: React.ElementType }) => (
     <div className="mb-6 lg:mb-8 bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-200">
@@ -49,22 +61,26 @@ export default function TaskPage() {
         ) : (
           tasks.map((task) => (
             <div key={task._id} className="relative border border-gray-200 rounded-lg p-3 lg:p-4 hover:shadow-md transition-all duration-200 bg-white">
-              <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  {task.status === 'completed' ? (
-                    <CheckCircle2 className="w-5 h-5 text-gray-600" />
-                  ) : (
-                    <AlertCircle className={`w-5 h-5 ${
-                      task.priority === 'high' ? 'text-red-500' :
-                      task.priority === 'medium' ? 'text-yellow-500' :
-                      'text-green-500'
-                    }`} />
-                  )}
+                  <input 
+                    type="checkbox" 
+                    checked={checked}
+                    onChange={() => toggleTaskStatus(task._id)}
+                    className="w-5 h-5 text-green-500 cursor-pointer"
+                  />
                   <h3 className="text-base lg:text-lg font-medium text-gray-900">{task.taskName}</h3>
                 </div>
                 <span className={`px-2.5 py-1 rounded-full text-xs lg:text-sm ${task.status === 'completed' ? 'bg-gray-100 text-gray-700' : 'bg-gray-800 text-gray-100'}`}>
                   {task.status}
                 </span>
+                <button 
+                  onClick={() => handleDelete(task._id)}
+                  className="text-red-500 hover:text-red-700 transition-colors"
+                  title="Delete Task"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
               </div>
               <p className="text-gray-600 mt-2 ml-8 text-sm lg:text-base">{task.taskDescription}</p>
               <div className="mt-3 lg:mt-4 ml-8 flex items-center text-xs lg:text-sm text-gray-500">
@@ -76,9 +92,9 @@ export default function TaskPage() {
         )}
       </div>
     </div>
-  )
+  );
 
-  const groupedTasks = groupTasks()
+  const groupedTasks = groupTasks();
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -86,21 +102,21 @@ export default function TaskPage() {
         <div className="container mx-auto px-4 py-6 lg:p-8 max-w-7xl">
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">Task Dashboard</h1>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <div className="bg-white p-4 rounded-lg shadow flex items-center gap-4">
+            <div onClick={() => setFilter('all')} className="cursor-pointer bg-white p-4 rounded-lg shadow flex items-center gap-4">
               <ListChecks className="w-8 h-8 text-blue-500" />
               <div>
                 <p className="text-gray-600 text-sm">Total Tasks</p>
                 <p className="text-xl font-semibold text-gray-900">{totalTasks}</p>
               </div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow flex items-center gap-4">
+            <div onClick={() => setFilter('completed')} className="cursor-pointer bg-white p-4 rounded-lg shadow flex items-center gap-4">
               <ClipboardCheck className="w-8 h-8 text-green-500" />
               <div>
                 <p className="text-gray-600 text-sm">Completed</p>
                 <p className="text-xl font-semibold text-gray-900">{completedTasks}</p>
               </div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow flex items-center gap-4">
+            <div onClick={() => setFilter('pending')} className="cursor-pointer bg-white p-4 rounded-lg shadow flex items-center gap-4">
               <ClipboardX className="w-8 h-8 text-red-500" />
               <div>
                 <p className="text-gray-600 text-sm">Pending</p>

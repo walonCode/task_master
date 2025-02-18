@@ -12,6 +12,13 @@ export async function GET(){
         //getting the userId
         const { getUser } = getKindeServerSession()
         const kindeUser = await getUser()
+
+        if(!kindeUser){
+            return NextResponse.json(
+                {message: "User is not authenticated"},
+                {status: 401}
+            )
+        }
         const user = await User.findOne({kindeUserId:kindeUser.id})
 
         if(!user){
