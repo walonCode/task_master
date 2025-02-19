@@ -1,7 +1,7 @@
 
 # TaskMaster - Ultimate Task Manager
 
-TaskMaster is a **Next.js**-powered task management app with **MongoDB** for storage, **Tailwind CSS** for styling, and **Custom Auth** for secure authentication. Track your tasks **weekly, daily, monthly, or as one-time** with an intuitive and modern UI.
+TaskMaster is a **Next.js**-powered task management app with **MongoDB** for storage, **Tailwind CSS** for styling, and **Kinde Auth** for secure authentication. Track your tasks **weekly, daily, monthly, or as one-time** with an intuitive and modern UI.
 
 ---
 
@@ -9,7 +9,7 @@ TaskMaster is a **Next.js**-powered task management app with **MongoDB** for sto
 
 - **Task Tracking**: Categorize tasks as **daily, weekly, monthly, or one-time**.
 - **Real-time Updates**: View tasks dynamically without refreshing the page.
-- **Authentication**: Secure login/signup using **Custom Auth**.
+- **Authentication**: Secure login/signup using **Kinde Auth**.
 - **Task Prioritization**: Set priorities for each task to stay organized.
 - **Fully Responsive**: Optimized for mobile, tablet, and desktop.
 - **Database Integration**: Uses **MongoDB** for persistent data storage.
@@ -50,6 +50,13 @@ TaskMaster is a **Next.js**-powered task management app with **MongoDB** for sto
       ACCESS_TOKEN_SECRET=""
       DATABASE_URI=""
       domain=""
+      KINDE_CLIENT_ID=""
+      KINDE_CLIENT_SECRET=""
+      KINDE_ISSUER_URL=""
+      KINDE_SITE_URL=""
+      KINDE_POST_LOGOUT_REDIRECT_URL=""
+      KINDE_POST_LOGIN_REDIRECT_URL=""
+      NEXT_PUBLIC_API_URL=""
      ```
 
 4. Run the development server:
@@ -88,7 +95,7 @@ TaskMaster is a **Next.js**-powered task management app with **MongoDB** for sto
 ### Backend
 - **API routes** (`app/api/`) handle task operations.
 - **MongoDB + Mongoose** for data storage.
-- **Custom authentication** for secure login.
+- **Kinde Auth** for secure login.
 
 ---
 
@@ -112,7 +119,8 @@ TaskMaster can also be deployed on Netlify, AWS, or via Docker.
 - **TypeScript**: Static typing.
 - **Tailwind CSS**: Modern styling.
 - **MongoDB + Mongoose**: Database.
-- **Custom Auth**: Secure authentication.
+- **Lucide-React + React-Icons**: Icons
+- **Kinde Auth**: Secure authentication.
 - **Vercel**: Deployment.
 
 ---
