@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC, useState,useContext } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
@@ -20,6 +20,7 @@ import {
   Calendar
 } from "lucide-react";
 import Image from "next/image";
+import ProjectContext from "@/libs/context/projectContext";
 
 type User = {
   id: string;
@@ -62,6 +63,7 @@ const Sidebar = ({
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isProjectsOpen, setIsProjectsOpen] = useState(false);
+  const { project } = useContext(ProjectContext) || {}
 
   return (
     <>
@@ -141,21 +143,9 @@ const Sidebar = ({
               </button>
               {isProjectsOpen && (
                 <div className="mt-2 pl-6 space-y-1">
-                  <SidebarLink
-                    href="/projects/website"
-                    icon={FolderClosed}
-                    label="Website Redesign"
-                  />
-                  <SidebarLink
-                    href="/projects/mobile"
-                    icon={FolderClosed}
-                    label="Mobile App"
-                  />
-                  <SidebarLink
-                    href="/projects/marketing"
-                    icon={FolderClosed}
-                    label="Marketing"
-                  />
+                  {project?.map(project=> (
+                    <SidebarLink key={project._id} href={`/project/${project._id}`} label={project.projectName} icon={FolderClosed} />
+                  ))}
                 </div>
               )}
             </div>
@@ -170,6 +160,8 @@ const Sidebar = ({
                       <Image
                         src={user.picture}
                         alt="Profile"
+                        width={100}
+                        height={100}
                         className="w-8 h-8 rounded-full object-cover"
                       />
                     ) : (

@@ -44,7 +44,6 @@ export const TaskProvider = ({children}:{children:React.ReactNode}) => {
             }
             const res = await axios.post('/api/tasks',newTask);
             setTask(task.concat(res.data.newTask))
-            window.location.reload()
         }catch(error){
             console.error(error)
         }

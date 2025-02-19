@@ -28,9 +28,9 @@ export async function GET() {
       )
     }
     
-    const totalTasks = await Task.countDocuments({ userId: user._id });
-    const completedTasks = await Task.countDocuments({ userId:user._id, status: "completed" });
-    const pendingTasks = await Task.countDocuments({ userId:user._id, status: { $ne: "completed" } });
+    const totalTasks = await Task.countDocuments({ userId: user._id,projectId:null });
+    const completedTasks = await Task.countDocuments({ userId:user._id, status: "completed",projectId:null });
+    const pendingTasks = await Task.countDocuments({ userId:user._id, status: { $ne: "completed" },projectId:null });
 
     revalidatePath('/dashboard')
     

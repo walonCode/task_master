@@ -33,13 +33,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <main className="pt-16 bg-gray-50"> 
-          <NavbarWrapper />
             <TaskProvider>
-              <ProjectProvider>
-                {children}
+              <ProjectProvider> 
+                <NavbarWrapper />
+                  {children}
+                <Footer />
               </ProjectProvider>
             </TaskProvider>
-          <Footer />
         </main> 
       </body>
     </html>

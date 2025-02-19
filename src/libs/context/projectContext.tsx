@@ -52,7 +52,6 @@ export const ProjectProvider = ({children}:{children:React.ReactNode}) => {
             const res = await axios.post('/api/project',newProject)
             console.log(res.data)
             setProject(project.concat(res.data.newProject))
-            window.location.reload()
         }catch(error){
             console.error(error)
         }
