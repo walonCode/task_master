@@ -74,9 +74,9 @@ const ProjectPage = () => {
           </div>
 
           {/* Project List */}
-          <div className="space-y-4">
+          <div className="space-y-4  flex flex-col">
             {filteredProjects!.length > 0 ? (
-              filteredProjects!.map((project) => <ProjectCard key={project._id} project={project} />)
+              filteredProjects!.map((project) => <Link key={project._id} href={`/project/${project._id}`}><ProjectCard key={project._id} project={project} /></Link>)
             ) : (
               <p className="text-gray-500 text-center py-4">No projects found.</p>
             )}

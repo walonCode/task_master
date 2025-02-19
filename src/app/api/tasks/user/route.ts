@@ -3,6 +3,7 @@ import { NextResponse} from "next/server";
 import { ConnectDB } from "@/libs/configs/mongoDB";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import User from "@/libs/models/userModel";
+import { revalidatePath } from "next/cache";
 
 export async function GET(){
     try{
@@ -38,6 +39,8 @@ export async function GET(){
                 {status: 200}
             )
         }
+
+        revalidatePath('/task')
 
         //sending tasks to user
         return NextResponse.json(

@@ -1,21 +1,21 @@
 import { ConnectDB } from "@/libs/configs/mongoDB";
-import Project from "@/libs/models/taskModel";
+import Project from "@/libs/models/projectModel";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{projectId:string}> }
 ) {
   try {
     //connecting to the database
     await ConnectDB();
 
     //getting the projectId from the url
-    const { projectId } = params;
+    const projectId = (await params).projectId;
 
     //getting the task using this params and checking weather it exist or not
-    const task = await Project.findOne({ _id: projectId });
-    if (!task) {
+    const project = await Project.findOne({ _id: projectId });
+    if (!project) {
       return NextResponse.json({ message: "Invalid Id" }, { status: 400 });
     };
 
@@ -24,13 +24,14 @@ export async function GET(
       {
         message: "Project found",
         success: true,
-        task,
+        project,
       },
       { status: 200 }
     );
   } catch (error: unknown) {
+    console.error(error)
     return NextResponse.json(
-      { message: "Server error", error },
+      { message: "Server error"},
       { status: 500 }
     );
   }
@@ -38,14 +39,14 @@ export async function GET(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{projectId:string}>}
 ) {
   try {
     //connecting to the database
     ConnectDB();
 
     //getting params from the url
-    const { projectId } = params;
+    const projectId  = (await params).projectId;
 
     //getting the tasks and deleting it from the database
     const task = await Project.findByIdAndDelete({ _id: projectId });
@@ -68,12 +69,12 @@ export async function DELETE(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     await ConnectDB();
 
-    const projectId = params.projectId;
+    const projectId = (await params).projectId
     const task = await Project.findByIdAndUpdate(
       projectId,
       { status: "completed" },

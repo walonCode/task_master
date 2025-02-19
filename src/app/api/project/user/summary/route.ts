@@ -3,6 +3,7 @@ import {  NextResponse } from "next/server";
 import { ConnectDB } from "@/libs/configs/mongoDB";
 import User from "@/libs/models/userModel";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
@@ -35,6 +36,7 @@ export async function GET() {
     const completedProjects = await Project.countDocuments({ owner:user._id, status: "completed" });
     const activeProjects = await Project.countDocuments({ owner:user._id, status: { $ne: "completed" } });
 
+    revalidatePath('/dashboard')
     return NextResponse.json(
       { totalProjects, completedProjects, activeProjects },
       { status: 200 }

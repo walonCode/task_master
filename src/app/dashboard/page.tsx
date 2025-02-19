@@ -128,6 +128,7 @@ const TaskCard = ({ task }: { task: Task }) => (
 
 // Project Card Component
 const ProjectCard = ({ project }: { project: Project }) => (
+ <Link href={`/project/${project._id}`}>
   <div className="p-4 border rounded-lg hover:shadow-md transition-shadow">
     <h3 className="font-medium">{project.projectName}</h3>
     <p className="text-sm text-gray-500 mt-1">Deadline: {project.dueDate}</p>
@@ -135,6 +136,7 @@ const ProjectCard = ({ project }: { project: Project }) => (
       {project.status.toUpperCase()}
     </p>
   </div>
+ </Link>
 );
 
 // Helper function to determine priority colors
