@@ -1,7 +1,7 @@
 "use client";
 
 import { useState,useContext } from "react";
-import { Calendar, Flag, Layout, ListTodo, Tag} from "lucide-react";
+import { Calendar, Flag, Layout, ListTodo, Tag, Loader2} from "lucide-react";
 import { ToastContainer,toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import TaskContext from "@/libs/context/taskContext";
@@ -12,19 +12,24 @@ export default function TaskCreate() {
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("medium");
   const [taskType, setTaskType] = useState("");
+  const [loading, setLoading] = useState<boolean>(false)
   const router = useRouter()
   const { createTask } = useContext(TaskContext) || {}
 
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setLoading(true)
       const task = await createTask!(taskName,taskDescription,priority,dueDate,taskType)
       toast('task created')
       console.log(task)
       router.push('/task')
     }catch(error){
+      setLoading(false)
       console.error(error)
       toast('task creation failed')
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -139,9 +144,10 @@ export default function TaskCreate() {
             </button>
             <button
               type="submit"
+              disabled={loading}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
             >
-              Create Task
+              {loading ? <Loader2 size={20} className="animate-spin"/> : "Create task"}
             </button>
           </div>
         </form>

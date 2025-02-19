@@ -29,7 +29,10 @@ const taskSchema = new Schema({
     taskType: {
         type:String,
         enum: ['daily','weekly','monthly','one-time'],
-        required:true,
+    },
+    projectTaskType: {
+        type:String,
+        enum: ['bugs','features','improvement']
     },
     status: {
         type:String,

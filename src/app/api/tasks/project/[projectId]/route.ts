@@ -45,10 +45,10 @@ export async function POST(req:NextRequest, {params}:{params:Promise<{projectId:
 
         //get data for the user
         const reqBody = await req.json()
-        const { taskName, taskDescription,  priority, dueDate, taskType} = reqBody
+        const { taskName, taskDescription,  priority, dueDate, projectTaskType} = reqBody
 
         //checking if the fields have values
-        if(!taskName || !taskDescription  || !priority || !dueDate || !taskType){
+        if(!taskName || !taskDescription  || !priority || !dueDate || !projectTaskType){
             return NextResponse.json(
                 {message:'All fields required'},
                 {status: 400}
@@ -71,7 +71,7 @@ export async function POST(req:NextRequest, {params}:{params:Promise<{projectId:
             userId:user._id,
             priority,
             dueDate,
-            taskType,
+            projectTaskType,
             projectId
         })
 

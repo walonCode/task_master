@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { ListChecks, Calendar, ClipboardList, Hourglass } from "lucide-react";
 import ProjectTaskCreation from "@/components/Project/dyanmic/ProjectTaskCreation";
+import { FaBug, FaRocket, FaTools } from "react-icons/fa";
 
 interface Project {
   _id: string;
@@ -29,6 +30,7 @@ interface Task {
   status: "pending" | "completed";
   createdAt: string;
   projectId?: string;
+  projectTaskType: 'bugs' | 'features' | 'improvement'
 }
 
 export default function ProjectDetail() {
@@ -54,7 +56,6 @@ export default function ProjectDetail() {
           axios.get(`/api/project/${projectId}`),
           axios.get(`/api/tasks/project/${projectId}`),
         ]);
-
         setProject(projectRes.data.project);
         setTasks(taskRes.data.taskProject);
       } catch (error) {
@@ -89,7 +90,7 @@ export default function ProjectDetail() {
               <Hourglass size={18} className="text-gray-400" />
               Status:{" "}
               <span className={`font-semibold ${project.status === "completed" ? "text-green-500" : "text-yellow-500"}`}>
-                {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                {project?.status}
               </span>
             </div>
           </div>
@@ -123,11 +124,11 @@ export default function ProjectDetail() {
                   <div>
                     <h4 className="text-lg font-bold text-gray-800">{task.taskName}</h4>
                     <p className="text-gray-600">{task.taskDescription}</p>
-                    <div className="mt-2 flex flex-wrap gap-3 text-sm text-gray-500">
+                    <div className="mt-2 flex items-center flex-wrap gap-3 text-sm text-gray-500">
                       <span className={`px-2 py-1 rounded-full text-white text-xs font-semibold ${
                         task.priority === "high" ? "bg-red-500" : task.priority === "medium" ? "bg-yellow-500" : "bg-green-500"
                       }`}>
-                        {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                        {task.priority}
                       </span>
                       <span className="flex items-center gap-1">
                         <Calendar size={16} className="text-gray-400" />
@@ -135,13 +136,16 @@ export default function ProjectDetail() {
                       </span>
                       <span className="flex items-center gap-1">
                         <ClipboardList size={16} className="text-gray-400" />
-                        {task.taskType.charAt(0).toUpperCase() + task.taskType.slice(1)}
+                        {task.taskType}
                       </span>
                       <span className={`font-semibold ${
                         task.status === "completed" ? "text-green-500" : "text-orange-500"
                       }`}>
-                        {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                        {task.status}
                       </span>
+                      <h1 className={`font-bold flex items-center gap-1 ${task.projectTaskType === 'bugs' ? "text-red-500" : task.projectTaskType === 'features' ? 'text-green-500' : "text-blue-500"}`}>
+                        {task.projectTaskType} {task.projectTaskType === 'bugs' ? <FaBug style={{ color: "red"}}/> : task.projectTaskType === 'features' ? <FaRocket style={{color: "green"}}/> : <FaTools style={{color : "blue"}}/>}
+                      </h1>
                     </div>
                   </div>
                 </li>
