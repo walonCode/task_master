@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import NavbarWrapper from "@/components/AuthWrapper";
 import { TaskProvider } from "@/libs/context/taskContext";
 import { ProjectProvider } from "@/libs/context/projectContext";
+import { KindeProvider } from "@kinde-oss/kinde-auth-nextjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,13 +34,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <main className="pt-16 bg-gray-50"> 
-            <TaskProvider>
+          <KindeProvider>
+          <TaskProvider>
               <ProjectProvider> 
                 <NavbarWrapper />
                   {children}
                 <Footer />
               </ProjectProvider>
             </TaskProvider>
+          </KindeProvider>
         </main> 
       </body>
     </html>

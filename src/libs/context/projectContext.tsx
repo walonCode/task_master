@@ -1,6 +1,7 @@
 "use client"
 import { createContext,useState,useEffect } from "react";
 import axios from "axios";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 interface Project {
     _id: string;
@@ -40,7 +41,15 @@ export const ProjectProvider = ({children}:{children:React.ReactNode}) => {
     const[project, setProject] = useState<Project[]>([])
     const [totalProject, setTotalProject]= useState<number>()
     const [completedProject, setCompletedProject] = useState<number>()
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const { isAuthenticated } = useKindeBrowserClient()
+    console.log(isAuthenticated)
 
+    useEffect(() => {
+        if(isAuthenticated != undefined){
+            setIsLoading(true)
+        }
+    },[isAuthenticated])
 
     const createProject = async(projectName:string,projectDescription:string,dueDate:string):Promise<void> => {
         try{
@@ -59,23 +68,22 @@ export const ProjectProvider = ({children}:{children:React.ReactNode}) => {
     }
 
     useEffect(()=>{
-        const getProject = async() =>{
-            try{
-                const res = await axios.get('/api/project/user')
-                console.log(res.data)
-                setProject(project.concat(res.data.projects))
-            }catch(error){
-                console.error(error)
+        if(isLoading){
+            const getProjectSummary = async() => {
+                try{
+                    const [projectRes,totalProject] = await Promise.all([
+                        axios.get('/api/project/user'),
+                        axios.get('/api/project/user/summary')
+                    ])
+                    setProject(project.concat(projectRes.data.project))
+                    setTotalProject(totalProject.data.totalProjects)
+                    setCompletedProject(totalProject.data.completedProjects)
+                }catch(error){
+                    console.error(error)
+                }
             }
+            getProjectSummary()
         }
-        async function getProjectTotal(){
-            const res = await axios.get('/api/project/user/summary')
-            console.log(res.data)
-            setTotalProject(res.data.totalProjects)
-            setCompletedProject(res.data.completedProjects)
-        }
-        getProjectTotal()
-        getProject()
     },[])
     return(
         <ProjectContext.Provider value={{

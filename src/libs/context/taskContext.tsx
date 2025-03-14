@@ -1,6 +1,7 @@
 "use client"
 import { createContext,useState,useEffect } from "react";
 import axios from "axios";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 interface Task {
     _id: string;
@@ -24,6 +25,8 @@ interface TaskProp {
 }
 
 
+
+
 const TaskContext = createContext<TaskProp | undefined>(undefined);
 
 export const TaskProvider = ({children}:{children:React.ReactNode}) => {
@@ -31,6 +34,9 @@ export const TaskProvider = ({children}:{children:React.ReactNode}) => {
     const [totalTask, setTotalTask]= useState<number>()
     const [completedTask, setCompletedTask] = useState<number>()
     const [pendingTask, setPendingTask] = useState<number>()
+    const { isAuthenticated } = useKindeBrowserClient()
+    console.log(isAuthenticated)
+    
     
 
     const createTask = async(taskName:string, taskDescription:string, priority:string, dueDate:string, taskType:string) => {
@@ -51,24 +57,23 @@ export const TaskProvider = ({children}:{children:React.ReactNode}) => {
     }
 
     useEffect(() => {
-        async function getTask(){
-            try{
-                const res = await axios.get('/api/tasks/user')
-                console.log(res.data.task)
-                setTask(task.concat(res.data.task))
-            }catch(error){
-                console.error(error)
+        if(isAuthenticated){
+            const getProjectSummary = async() => {
+                try{
+                    const [taskRes,totalTask] = await Promise.all([
+                        axios.get('/api/tasks/user'),
+                        axios.get('/api/tasks/user/summary')
+                    ])
+                    setTask(task.concat(taskRes.data.task))
+                    setTotalTask(totalTask.data.totalTasks)
+                    setCompletedTask(totalTask.data.completedTasks)
+                    setPendingTask(totalTask.data.pendingTasks)
+                }catch(error){
+                    console.error(error)
+                }
             }
+            getProjectSummary()
         }
-        async function getTaskTotal(){
-            const res = await axios.get('/api/tasks/user/summary')
-            console.log(res.data)
-            setTotalTask(res.data.totalTasks)
-            setCompletedTask(res.data.completedTasks)
-            setPendingTask(res.data.pendingTasks)
-        }
-        getTaskTotal()
-        getTask()
     },[])
 
     return(

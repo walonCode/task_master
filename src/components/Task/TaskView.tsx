@@ -1,6 +1,6 @@
 "use client"
 import React, { useContext, useState } from 'react'
-import { CalendarDays, Clock, ListChecks, ClipboardCheck, ClipboardX, Trash2 } from 'lucide-react'
+import { CalendarDays, Clock, ListChecks, ClipboardCheck, CheckCircle, ClipboardX, Trash2 } from 'lucide-react'
 import TaskContext from '@/libs/context/taskContext'
 
 interface Task {
@@ -18,9 +18,7 @@ interface Task {
 
 export default function TaskView() {
   const { task } = useContext(TaskContext) || {}
-  const [isChecked, setIsChecked] = useState<boolean>(true)
   const [filter, setFilter] = useState<'all' | 'completed' | 'pending'>('all');
-
 
   const taskWithOutProjectId = task!.filter(task => task.projectId == null)
   const totalTasks = taskWithOutProjectId.length;
@@ -31,10 +29,6 @@ export default function TaskView() {
     console.log(`Deleting task with ID: ${taskId}`);
   };
 
-  const handleChange =()=>{
-    setIsChecked(!isChecked)
-  }
-
   const toggleTaskStatus = (taskId: string) => {
     console.log(`Toggling task status for ID: ${taskId}`);
   };
@@ -43,7 +37,6 @@ export default function TaskView() {
     filter === 'all' ? true : filter === 'completed' ? t.status === 'completed' : t.status === 'pending'
   );
 
-
   const groupTasks = () => ({
     daily: filteredTasks.filter(taskWithOutProjectId => taskWithOutProjectId.taskType === 'daily'),
     weekly: filteredTasks.filter(taskWithOutProjectId => taskWithOutProjectId.taskType === 'weekly'),
@@ -51,53 +44,38 @@ export default function TaskView() {
     oneTime: filteredTasks.filter(taskWithOutProjectId => taskWithOutProjectId.taskType === 'one-time')
   });
 
-  const TaskGroup = ({ tasks, title, icon: Icon }: { tasks: Task[], title: string, icon: React.ElementType }) => (
-    <div className="mb-6 lg:mb-8 bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-200">
-      <div className="flex items-center gap-2 mb-4 lg:mb-6">
-        <Icon className="w-5 h-5 lg:w-6 lg:h-6 text-gray-700" />
-        <h2 className="text-xl lg:text-2xl font-semibold text-gray-900">{title}</h2>
-        <span className="ml-auto bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full text-xs lg:text-sm">
-          {tasks.length} tasks
-        </span>
+  const TaskGroup = ({ tasks, title, icon: Icon }: { tasks: Task[]; title: string; icon: React.ElementType }) => (
+    <div className="bg-white rounded-xl p-5 shadow-md border border-gray-200">
+      <div className="flex items-center gap-3 mb-4">
+        <Icon className="w-6 h-6 text-gray-700" />
+        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+        <span className="ml-auto bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs">{tasks.length} tasks</span>
       </div>
-      <div className="grid gap-3 lg:gap-4">
-        {tasks.length === 0 ? (
-          <div className="text-gray-500 italic flex items-center justify-center py-6 lg:py-8 bg-gray-50 rounded-lg">
-            <p>No tasks available</p>
-          </div>
-        ) : (
-          tasks.map((task) => (
-            <div key={task._id} className="relative border border-gray-200 rounded-lg p-3 lg:p-4 hover:shadow-md transition-all duration-200 bg-white">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <input 
-                    type="checkbox" 
-                    checked={isChecked}
-                    onChange={() => handleChange()}
-                    className="w-5 h-5 text-green-500 cursor-pointer"
-                  />
-                  <h3 className="text-base lg:text-lg font-medium text-gray-900">{task.taskName}</h3>
-                </div>
-                <span className={`px-2.5 py-1 rounded-full text-xs lg:text-sm ${task.status === 'completed' ? 'bg-gray-100 text-gray-700' : 'bg-gray-800 text-gray-100'}`}>
-                  {task.status}
-                </span>
-                <button 
-                  onClick={() => handleDelete(task._id)}
-                  className="text-red-500 hover:text-red-700 transition-colors"
-                  title="Delete Task"
-                >
+      {tasks.length === 0 ? (
+        <p className="text-gray-500 italic text-center py-4">No tasks available</p>
+      ) : (
+        <div className="space-y-3">
+          {tasks.map(task => (
+            <div key={task._id} className="p-4 border rounded-lg shadow-sm flex items-start justify-between bg-gray-50 hover:bg-gray-100 transition">
+              <div>
+                <h3 className="text-md font-medium text-gray-900">{task.taskName}</h3>
+                <p className="text-sm text-gray-600 mt-1">{task.taskDescription}</p>
+                <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                  <Clock className="w-4 h-4" /> Due: {new Date(task.dueDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button title='completed' onClick={() => toggleTaskStatus(task._id)} className="text-green-500 hover:text-green-700">
+                  <CheckCircle className="w-5 h-5" />
+                </button>
+                <button title='delete' onClick={() => handleDelete(task._id)} className="text-red-500 hover:text-red-700">
                   <Trash2 className="w-5 h-5" />
                 </button>
               </div>
-              <p className="text-gray-600 mt-2 ml-8 text-sm lg:text-base">{task.taskDescription}</p>
-              <div className="mt-3 lg:mt-4 ml-8 flex items-center text-xs lg:text-sm text-gray-500">
-                <Clock className="w-4 h-4 mr-1" />
-                Due: {new Date(task.dueDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-              </div>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 
@@ -109,25 +87,25 @@ export default function TaskView() {
         <div className="container mx-auto px-4 py-6 lg:p-8 max-w-7xl">
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 lg:mb-8">Task Dashboard</h1>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <div onClick={() => setFilter('all')} className="cursor-pointer bg-white p-4 rounded-lg shadow flex items-center gap-4">
-              <ListChecks className="w-8 h-8 text-blue-500" />
+            <div onClick={() => setFilter('all')} className={`cursor-pointer p-4 rounded-lg shadow flex items-center gap-4 transition-colors ${filter === 'all' ? 'bg-blue-500 text-white' : 'bg-white hover:bg-blue-100'}`}>
+              <ListChecks className={`w-8 h-8 ${filter === 'all' ? 'text-white' : 'text-blue-500'}`} />
               <div>
-                <p className="text-gray-600 text-sm">Total Tasks</p>
-                <p className="text-xl font-semibold text-gray-900">{totalTasks}</p>
+                <p className="text-sm">Total Tasks</p>
+                <p className="text-xl font-semibold">{totalTasks}</p>
               </div>
             </div>
-            <div onClick={() => setFilter('completed')} className="cursor-pointer bg-white p-4 rounded-lg shadow flex items-center gap-4">
-              <ClipboardCheck className="w-8 h-8 text-green-500" />
+            <div onClick={() => setFilter('completed')} className={`cursor-pointer p-4 rounded-lg shadow flex items-center gap-4 transition-colors ${filter === 'completed' ? 'bg-green-500 text-white' : 'bg-white hover:bg-green-100'}`}>
+              <ClipboardCheck className={`w-8 h-8 ${filter === 'completed' ? 'text-white' : 'text-green-500'}`} />
               <div>
-                <p className="text-gray-600 text-sm">Completed</p>
-                <p className="text-xl font-semibold text-gray-900">{completedTasks}</p>
+                <p className="text-sm">Completed</p>
+                <p className="text-xl font-semibold">{completedTasks}</p>
               </div>
             </div>
-            <div onClick={() => setFilter('pending')} className="cursor-pointer bg-white p-4 rounded-lg shadow flex items-center gap-4">
-              <ClipboardX className="w-8 h-8 text-red-500" />
+            <div onClick={() => setFilter('pending')} className={`cursor-pointer p-4 rounded-lg shadow flex items-center gap-4 transition-colors ${filter === 'pending' ? 'bg-red-500 text-white' : 'bg-white hover:bg-red-100'}`}>
+              <ClipboardX className={`w-8 h-8 ${filter === 'pending' ? 'text-white' : 'text-red-500'}`} />
               <div>
-                <p className="text-gray-600 text-sm">Pending</p>
-                <p className="text-xl font-semibold text-gray-900">{pendingTasks}</p>
+                <p className="text-sm">Pending</p>
+                <p className="text-xl font-semibold">{pendingTasks}</p>
               </div>
             </div>
           </div>

@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { ListChecks, Calendar, ClipboardList, Hourglass } from "lucide-react";
+import { ListChecks, Calendar, ClipboardList, Hourglass, Trash2, CheckCircle } from "lucide-react";
 import ProjectTaskCreation from "@/components/Project/dyanmic/ProjectTaskCreation";
 import { FaBug, FaRocket, FaTools } from "react-icons/fa";
 
@@ -30,7 +30,7 @@ interface Task {
   status: "pending" | "completed";
   createdAt: string;
   projectId?: string;
-  projectTaskType: 'bugs' | 'features' | 'improvement'
+  projectTaskType: "bugs" | "features" | "improvement";
 }
 
 export default function ProjectDetail() {
@@ -40,12 +40,12 @@ export default function ProjectDetail() {
   const [project, setProject] = useState<Project | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState<boolean>(false)
+  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState<boolean>(false);
 
   const handleOpen = () => {
     setIsCreateTaskOpen(!isCreateTaskOpen);
-  }
+  };
+
   // Fetch Project and Tasks
   useEffect(() => {
     if (!projectId) return;
@@ -67,6 +67,30 @@ export default function ProjectDetail() {
 
     fetchProjectDetails();
   }, [projectId]);
+
+  // Delete Task
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      await axios.delete(`/api/tasks/${taskId}`);
+      setTasks(tasks.filter((task) => task._id !== taskId));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  };
+
+  // Mark Task as Complete
+  const handleCompleteTask = async (taskId: string) => {
+    try {
+      await axios.patch(`/api/tasks/${taskId}`, { status: "completed" });
+      setTasks(
+        tasks.map((task) =>
+          task._id === taskId ? { ...task, status: "completed" } : task
+        )
+      );
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
+  };
 
   if (loading) return <p className="text-center text-gray-500">Loading project details...</p>;
   if (!project) return <p className="text-center text-red-500">Project not found.</p>;
@@ -97,14 +121,17 @@ export default function ProjectDetail() {
         </div>
 
         {/* Task Creation Component */}
-        <div className={isCreateTaskOpen ?"hidden":"flex items-center justify-center" }>
-          <button className="font-bold text-xl border-2 border-blue-500 py-1 px-6 rounded-md bg-blue-500  text-white" onClick={handleOpen}>Create Tasks</button>
+        <div className={isCreateTaskOpen ? "hidden" : "flex items-center justify-center"}>
+          <button
+            className="font-bold text-xl border-2 border-blue-500 py-1 px-6 rounded-md bg-blue-500 text-white"
+            onClick={handleOpen}
+          >
+            Create Tasks
+          </button>
         </div>
-        
+
         <div>
-          {isCreateTaskOpen && (
-            <ProjectTaskCreation projectId={projectId} handleOpen={handleOpen} />
-          )}
+          {isCreateTaskOpen && <ProjectTaskCreation projectId={projectId} handleOpen={handleOpen} />}
         </div>
 
         {/* Task List */}
@@ -125,9 +152,15 @@ export default function ProjectDetail() {
                     <h4 className="text-lg font-bold text-gray-800">{task.taskName}</h4>
                     <p className="text-gray-600">{task.taskDescription}</p>
                     <div className="mt-2 flex items-center flex-wrap gap-3 text-sm text-gray-500">
-                      <span className={`px-2 py-1 rounded-full text-white text-xs font-semibold ${
-                        task.priority === "high" ? "bg-red-500" : task.priority === "medium" ? "bg-yellow-500" : "bg-green-500"
-                      }`}>
+                      <span
+                        className={`px-2 py-1 rounded-full text-white text-xs font-semibold ${
+                          task.priority === "high"
+                            ? "bg-red-500"
+                            : task.priority === "medium"
+                            ? "bg-yellow-500"
+                            : "bg-green-500"
+                        }`}
+                      >
                         {task.priority}
                       </span>
                       <span className="flex items-center gap-1">
@@ -138,15 +171,47 @@ export default function ProjectDetail() {
                         <ClipboardList size={16} className="text-gray-400" />
                         {task.taskType}
                       </span>
-                      <span className={`font-semibold ${
-                        task.status === "completed" ? "text-green-500" : "text-orange-500"
-                      }`}>
+                      <span
+                        className={`font-semibold ${
+                          task.status === "completed" ? "text-green-500" : "text-orange-500"
+                        }`}
+                      >
                         {task.status}
                       </span>
-                      <h1 className={`font-bold flex items-center gap-1 ${task.projectTaskType === 'bugs' ? "text-red-500" : task.projectTaskType === 'features' ? 'text-green-500' : "text-blue-500"}`}>
-                        {task.projectTaskType} {task.projectTaskType === 'bugs' ? <FaBug style={{ color: "red"}}/> : task.projectTaskType === 'features' ? <FaRocket style={{color: "green"}}/> : <FaTools style={{color : "blue"}}/>}
+                      <h1
+                        className={`font-bold flex items-center gap-1 ${
+                          task.projectTaskType === "bugs"
+                            ? "text-red-500"
+                            : task.projectTaskType === "features"
+                            ? "text-green-500"
+                            : "text-blue-500"
+                        }`}
+                      >
+                        {task.projectTaskType}{" "}
+                        {task.projectTaskType === "bugs" ? (
+                          <FaBug style={{ color: "red" }} />
+                        ) : task.projectTaskType === "features" ? (
+                          <FaRocket style={{ color: "green" }} />
+                        ) : (
+                          <FaTools style={{ color: "blue" }} />
+                        )}
                       </h1>
                     </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-3 mt-4 sm:mt-0">
+                    {task.status !== "completed" && (
+                      <button
+                        className="text-green-500 hover:text-green-700"
+                        onClick={() => handleCompleteTask(task._id)}
+                      >
+                        <CheckCircle size={20} />
+                      </button>
+                    )}
+                    <button className="text-red-500 hover:text-red-700" onClick={() => handleDeleteTask(task._id)}>
+                      <Trash2 size={20} />
+                    </button>
                   </div>
                 </li>
               ))
